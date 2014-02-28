@@ -1,0 +1,56 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+	
+<Configuration>
+	<ViewDefinitions>
+		<!-- RabbitMQ.VirtualHost -->
+        <View>
+	        <Name>RabbitMQ</Name>
+	        <ViewSelectedBy>
+	            <TypeName>RabbitMQ.VirtualHost</TypeName>
+	        </ViewSelectedBy>
+	        <TableControl>
+	            <TableHeaders>
+	                <TableColumnHeader>
+	                    <Label>Name</Label>
+	                    <Width>60</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Messages</Label>
+	                    <Width>8</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Messages ready</Label>
+	                    <Width>8</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Messages unacked</Label>
+	                    <Width>8</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+	            </TableHeaders>
+	            <TableRowEntries>
+	                <TableRowEntry>
+	                    <TableColumnItems>
+	                        <TableColumnItem>
+	                            <PropertyName>name</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>messages</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>messages_ready</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>messages_unacknowledged</PropertyName>
+	                        </TableColumnItem>
+	                    </TableColumnItems>
+	                </TableRowEntry>
+	            </TableRowEntries>
+	        </TableControl>
+	    </View>
+
+	</ViewDefinitions>
+</Configuration>
