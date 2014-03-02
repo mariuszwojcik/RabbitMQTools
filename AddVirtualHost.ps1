@@ -1,4 +1,57 @@
-﻿function Add-RabbitMQVirtualHost
+﻿<#
+.Synopsis
+   Adds Virtual Hosts to RabbitMQ server.
+
+.DESCRIPTION
+   The Add-RabbitMQVirtualHost allows for creating new Virtual Hosts in given RabbitMQ server.
+
+   To add Virtual Hosts to remote server you need to provide -ComputerName.
+
+   You may pipe an object with names and, optionally, with computer names to create multiple VirtualHosts. For more information how to do that see Examples.
+
+   The cmdlet is using REST Api provided by RabbitMQ Management Plugin. For more information go to: https://www.rabbitmq.com/management.html
+
+.EXAMPLE
+   Add-RabbitMQVirtualHost testHost
+
+   This command adds new Virtual Host named "testHost" to local RabbitMQ server.
+
+.EXAMPLE
+   Add-RabbitMQVirtualHost VHost1, VHost2
+
+   This command adds two new Virtual Hosts named "VHost1" and "VHost2" to local RabbitMQ server.
+
+.EXAMPLE
+   Add-RabbitMQVirtualHost testHost -ComputerName myrabbitmq.servers.com
+
+   This command adds new Virtual Host named "testHost" to myrabbitmq.servers.com server.
+
+.EXAMPLE
+   @("VHost1", "VHost2") | Add-RabbitMQVirtualHost
+
+   This command pipes list of Virtual Hosts to add to the RabbitMQ server. In the above example two new Virtual Hosts named "VHost1" and "VHost2" will be created in local RabbitMQ server.
+
+.EXAMPLE
+    $a = $(
+        New-Object -TypeName psobject -Prop @{"ComputerName" = "localhost"; "Name" = "vh1"}
+        New-Object -TypeName psobject -Prop @{"ComputerName" = "localhost"; "Name" = "vh2"}
+        New-Object -TypeName psobject -Prop @{"ComputerName" = "127.0.0.1"; "Name" = "vh3"}
+    )
+
+
+   $a | Add-RabbitMQVirtualHost
+
+   Above example shows how to pipe both Virtual Host name and Computer Name to specify server on which the Virtual Host should be created.
+   
+   In the above example two new Virtual Hosts named "vh1" and "vh1" will be created in RabbitMQ local server, and one Virtual Host named "vh3" will be created on the server 127.0.0.1.
+
+.INPUTS
+   You can pipe VirtualHost names and optionally ComputerNames to this cmdlet.
+
+.LINK
+    https://www.rabbitmq.com/management.html - information about RabbitMQ management plugin.
+#>
+function Add-RabbitMQVirtualHost
 {
     [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="Low")]
     Param
