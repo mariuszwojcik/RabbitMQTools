@@ -4,3 +4,4 @@ New-Alias -Name grvh -value Get-RabbitMQVirtualHost -Description "Gets RabbitMQ'
 
 # Modules
 Export-ModuleMember -Function Get-RabbitMQVirtualHost, Add-RabbitMQVirtualHost, Remove-RabbitMQVirtualHost
+Export-ModuleMember -Function Get-RabbitMQOverview

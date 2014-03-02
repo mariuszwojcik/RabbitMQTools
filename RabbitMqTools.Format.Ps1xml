@@ -52,5 +52,130 @@
 	        </TableControl>
 	    </View>
 
+		<!-- RabbitMQ.ServerOverview -->
+        <View>
+	        <Name>RabbitMQ</Name>
+	        <ViewSelectedBy>
+	            <TypeName>RabbitMQ.ServerOverview</TypeName>
+	        </ViewSelectedBy>
+	        <TableControl>
+	            <TableHeaders>
+	                <TableColumnHeader>
+	                    <Label>Ver.</Label>
+	                    <Width>6</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Erlang ver.</Label>
+	                    <Width>7</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+                    <TableColumnHeader>
+	                    <Label>Mgm ver.</Label>
+	                    <Width>6</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+                    <TableColumnHeader>
+	                    <Label>Server</Label>
+	                    <Width>20</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+                    <TableColumnHeader>
+	                    <Label>Node</Label>
+	                    <Width>20</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+                    <TableColumnHeader>
+	                    <Label>Messages total</Label>
+	                    <Width>8</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+                    <TableColumnHeader>
+	                    <Label>Messages ready</Label>
+	                    <Width>8</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+                    <TableColumnHeader>
+	                    <Label>Messages unacked</Label>
+	                    <Width>8</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+
+                    <TableColumnHeader>
+	                    <Label>Consumers</Label>
+	                    <Width>11</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+                    <TableColumnHeader>
+	                    <Label>Queues</Label>
+	                    <Width>6</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+                    <TableColumnHeader>
+	                    <Label>Exchanges</Label>
+	                    <Width>9</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+                    <TableColumnHeader>
+	                    <Label>Connections</Label>
+	                    <Width>11</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+                    <TableColumnHeader>
+	                    <Label>Channels</Label>
+	                    <Width>8</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+
+	            </TableHeaders>
+	            <TableRowEntries>
+	                <TableRowEntry>
+	                    <TableColumnItems>
+	                        <TableColumnItem>
+	                            <PropertyName>rabbitmq_version</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>erlang_version</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>management_version</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>ComputerName</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>node</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+                                <ScriptBlock>$_.queue_totals.messages</ScriptBlock>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+                                <ScriptBlock>$_.queue_totals.messages_ready</ScriptBlock>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+                                <ScriptBlock>$_.queue_totals.messages_unacknowledged</ScriptBlock>
+	                        </TableColumnItem>
+
+	                        <TableColumnItem>
+                                <ScriptBlock>$_.object_totals.consumers</ScriptBlock>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+                                <ScriptBlock>$_.object_totals.queues</ScriptBlock>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+                                <ScriptBlock>$_.object_totals.exchanges</ScriptBlock>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+                                <ScriptBlock>$_.object_totals.connections</ScriptBlock>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+                                <ScriptBlock>$_.object_totals.connections</ScriptBlock>
+	                        </TableColumnItem>
+	                    </TableColumnItems>
+	                </TableRowEntry>
+	            </TableRowEntries>
+	        </TableControl>
+	    </View>
+
 	</ViewDefinitions>
 </Configuration>
