@@ -35,7 +35,7 @@
 #>
 function Get-RabbitMQOverview
 {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='None')]
     Param
     (
         # Name of the computer hosting RabbitMQ server. Defalut value is localhost.
@@ -58,11 +58,17 @@ function Get-RabbitMQOverview
     }
     Process
     {
+        if (-not $pscmdlet.ShouldProcess("server $ComputerName", "Get overview: $(NamesToString $Name '(all)')"))
+        {
+            foreach ($cn in $Name)
+            {
+                Write-Host "Getting overview for server: $cn"
+            }
+            return;
+        }
+
         foreach ($cn in $Name)
         {
-            #$url = "http://$([System.Web.HttpUtility]::UrlEncode($cn)):15672/api/overview"
-            #$result = Invoke-RestMethod -Credential $cred -Method Get $url
-            
             $overview = GetItemsFromRabbitMQApi $cn $UserName $Password "overview"
             $overview | Add-Member -NotePropertyName "ComputerName" -NotePropertyValue $cn
             $overview.PSObject.TypeNames.Insert(0, "RabbitMQ.ServerOverview")
