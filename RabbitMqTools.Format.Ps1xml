@@ -177,5 +177,65 @@
 	        </TableControl>
 	    </View>
 
+		<!-- RabbitMQ.Exchange -->
+        <View>
+	        <Name>RabbitMQ</Name>
+	        <ViewSelectedBy>
+	            <TypeName>RabbitMQ.Exchange</TypeName>
+	        </ViewSelectedBy>
+	        <TableControl>
+                <TableHeaders>
+	                <TableColumnHeader>
+	                    <Label>Computer name</Label>
+	                    <Width>15</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>VHost</Label>
+	                    <Width>15</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Name</Label>
+	                    <Width>30</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Type</Label>
+	                    <Width>8</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Parameters</Label>
+	                    <Width>10</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	            </TableHeaders>
+	            <TableRowEntries>
+	                <TableRowEntry>
+	                    <TableColumnItems>
+	                        <TableColumnItem>
+	                            <PropertyName>ComputerName</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>vhost</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>name</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>type</PropertyName>
+	                        </TableColumnItem>
+                            <TableColumnItem>
+	                            <ScriptBlock>
+                                    [String]::Format("{0} {1} {2} {3}", @{$true="D"; $false=" "}[$_.durable], @{$true="AD"; $false="  "}[$_.auto_delete], @{$true="I"; $false=" "}[$_.internal], @{$true="  "; $false="AE"}[-not ($_.arguments)."alternate-exchange"])
+                                </ScriptBlock>
+	                        </TableColumnItem>
+	                    </TableColumnItems>
+	                </TableRowEntry>
+	            </TableRowEntries>
+	        </TableControl>
+	    </View>
+
 	</ViewDefinitions>
 </Configuration>
