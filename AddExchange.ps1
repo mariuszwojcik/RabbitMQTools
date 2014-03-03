@@ -57,9 +57,9 @@
     }
     Process
     {
-        if ($VirtualHost -eq "/") {
-            throw "Invalid Virtual Host. Currently it is not possible to create exchanges in ""/"" Virtual Host. Please specify different virtual host."
-        }
+        #if ($VirtualHost -eq "/") {
+        #    throw "Invalid Virtual Host. Currently it is not possible to create exchanges in ""/"" Virtual Host. Please specify different virtual host."
+        #}
 
         if ($pscmdlet.ShouldProcess("server: $ComputerName, vhost: $VirtualHost", "Add exchange(s): $(NamesToString $Name '(all)')")) {
             
