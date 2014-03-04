@@ -9,4 +9,4 @@ Export-ModuleMember -Function Get-RabbitMQVirtualHost, Add-RabbitMQVirtualHost, 
 Export-ModuleMember -Function Get-RabbitMQOverview
 Export-ModuleMember -Function Get-RabbitMQExchange, Add-RabbitMQExchange, Remove-RabbitMQExchange
 
-Export-ModuleMember -Function Get-RabbitMQConnection
+Export-ModuleMember -Function Get-RabbitMQConnection, RemoveConnection.ps1
