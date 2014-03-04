@@ -2,7 +2,7 @@
 {
     Param
     (
-        [parameter(Mandatory=$true)]
+        [parameter()]
         [PSObject[]]$items,
 
         [parameter(Mandatory=$true)]
