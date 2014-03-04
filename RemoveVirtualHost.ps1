@@ -29,7 +29,7 @@
 .EXAMPLE
    @("VHost1", "VHost2") | Remove-RabbitMQVirtualHost
 
-   This command pipes list of Virtual Hosts to br removed from the RabbitMQ server. In the above example two Virtual Hosts named "VHost1" and "VHost2" will be removed from local RabbitMQ server.
+   This command pipes list of Virtual Hosts to be removed from the RabbitMQ server. In the above example two Virtual Hosts named "VHost1" and "VHost2" will be removed from local RabbitMQ server.
 
 .EXAMPLE
     $a = $(
@@ -43,7 +43,7 @@
 
    Above example shows how to pipe both Virtual Host name and Computer Name to specify server from which the Virtual Host should be removed.
    
-   In the above example two Virtual Hosts named "vh1" and "vh1" will be removed from RabbitMQ local server, and one Virtual Host named "vh3" will be removed from the server 127.0.0.1.
+   In the above example two Virtual Hosts named "vh1" and "vh2" will be removed from RabbitMQ local server, and one Virtual Host named "vh3" will be removed from the server 127.0.0.1.
 
 .INPUTS
    You can pipe VirtualHost names and optionally ComputerNames to this cmdlet.
