@@ -90,9 +90,9 @@ function Get-RabbitMQExchange
     {
         if ($pscmdlet.ShouldProcess("server $ComputerName", "Get exchange(s): $(NamesToString $Name '(all)')"))
         {
-            $vhosts = GetItemsFromRabbitMQApi $ComputerName $UserName $Password "exchanges"
+            $exchanges = GetItemsFromRabbitMQApi $ComputerName $UserName $Password "exchanges"
             
-            $result = ApplyFilter $vhosts 'vhost' $VirtualHost
+            $result = ApplyFilter $exchanges 'vhost' $VirtualHost
             $result = ApplyFilter $result 'name' $Name
 
             $result | Add-Member -NotePropertyName "ComputerName" -NotePropertyValue $ComputerName
