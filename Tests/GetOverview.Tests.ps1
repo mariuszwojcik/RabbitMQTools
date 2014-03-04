@@ -1,7 +1,6 @@
 ﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+. "$here\TestSetup.ps1"
 . "$here\..\GetOverview.ps1"
-
-$server = "192.168.232.129"
 
 Describe -Tags "Example" "Get-RabbitMQOverview" {
 
