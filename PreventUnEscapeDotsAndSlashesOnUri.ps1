@@ -1,24 +1,57 @@
-﻿function PreventUnEscapeDotsAndSlashesOnUri
+﻿if (-not $UnEscapeDotsAndSlashes) { Set-Variable -Scope Script -name UnEscapeDotsAndSlashes -value 0x2000000 }
+
+function GetUriParserFlags
 {
-    $protocol = "http"
-    $UnEscapeDotsAndSlashes = 0x2000000
 
     $getSyntax = [System.UriParser].GetMethod("GetSyntax", 40)
     $flags = [System.UriParser].GetField("m_Flags", 36)
 
-    $parser = $getSyntax.Invoke($null, $protocol)
-    $currentValue = $flags.GetValue($parser)
+    $parser = $getSyntax.Invoke($null, "http")
+    return $flags.GetValue($parser)
+}
 
-    $a = $v -band 0x2000000 
-    if (($currentValue -band $UnEscapeDotsAndSlashes) -eq $UnEscapeDotsAndSlashes) {
-        Write-Verbose "UriParser is automatically un-escaping dots and slashes. Switching off the flag."
+function SetUriParserFlags([int]$newValue)
+{
+    $getSyntax = [System.UriParser].GetMethod("GetSyntax", 40)
+    $flags = [System.UriParser].GetField("m_Flags", 36)
+    
+    $parser = $getSyntax.Invoke($null, "http")
+    $flags.SetValue($parser, $newValue)
+}
 
-        $newValue = $currentValue -bxor $UnEscapeDotsAndSlashes
-        $flags.SetValue($parser, $newValue)
+function PreventUnEscapeDotsAndSlashesOnUri
+{
+    if (-not $uriUnEscapesDotsAndSlashes) { return }
 
-        Write-Verbose "Un-escaping dots and slashes flag has been switched switched off."
+    Write-Verbose "Switching off UnEscapesDotsAndSlashes flag on UriParser."
+
+    $newValue = $defaultUriParserFlagsValue -bxor $UnEscapeDotsAndSlashes
+    
+    SetUriParserFlags $newValue
+}
+
+function RestoreUriParserFlags
+{
+    if (-not $uriUnEscapesDotsAndSlashes) { return }
+
+    Write-Verbose "Restoring UriParser flags - switching on UnEscapesDotsAndSlashes flag."
+
+    try
+    {
+        SetUriParserFlags $defaultUriParserFlagsValue
+    }
+    catch [System.Exception]
+    {
+        Write-Error "Failed to restore UriParser flags. This may cause your scripts to behave unexpectedly. You can find more at get-help about_UnEsapingDotsAndSlashes."
+        throw
     }
 }
 
+if (-not $defaultUriParserFlagsValue) { Set-Variable -Scope Script -name defaultUriParserFlagsValue -value (GetUriParserFlags) }
+if (-not $uriUnEscapesDotsAndSlashes) { Set-Variable -Scope Script -name uriUnEscapesDotsAndSlashes -value (($defaultUriParserFlagsValue -band $UnEscapeDotsAndSlashes) -eq $UnEscapeDotsAndSlashes) }
 
-PreventUnEscapeDotsAndSlashesOnUri
+
+if ($uriUnEscapesDotsAndSlashes)
+{
+    Write-Host -ForegroundColor Red "The default URI behaviour is to un-escape dots and slahes which may prevent module from working correctly. The behaviour will be overriden on some cases. To learn more please read get-help about_UnEsapingDotsAndSlashes."
+}
