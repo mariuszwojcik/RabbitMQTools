@@ -294,5 +294,67 @@
 	            </TableRowEntries>
 	        </TableControl>
 	    </View>
+
+		<!-- RabbitMQ.Node -->
+        <View>
+	        <Name>RabbitMQ</Name>
+	        <ViewSelectedBy>
+	            <TypeName>RabbitMQ.Node</TypeName>
+	        </ViewSelectedBy>
+	        <TableControl>
+                <TableHeaders>
+	                <TableColumnHeader>
+	                    <Label>Computer name</Label>
+	                    <Width>15</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Node</Label>
+	                    <Width>40</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Memory</Label>
+	                    <Width>15</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Disc</Label>
+	                    <Width>15</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Proc.</Label>
+	                    <Width>10</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+	            </TableHeaders>
+	            <TableRowEntries>
+	                <TableRowEntry>
+	                    <TableColumnItems>
+	                        <TableColumnItem>
+	                            <PropertyName>ComputerName</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<ScriptBlock>
+									[String]::Format("{0} {1}", $_.name, @{$true=""; $false="(stopped)"}[$_.running])
+								</ScriptBlock>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>mem_used</PropertyName>
+								<FormatString>{0:##,#}</FormatString>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>disk_free</PropertyName>
+								<FormatString>{0:##,#}</FormatString>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>proc_used</PropertyName>
+	                        </TableColumnItem>
+	                    </TableColumnItems>
+	                </TableRowEntry>
+	            </TableRowEntries>
+	        </TableControl>
+	    </View>
 	</ViewDefinitions>
 </Configuration>
