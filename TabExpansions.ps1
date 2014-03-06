@@ -93,6 +93,23 @@ $channelCompletion_Process = {
     }
 }
 
+$queueCompletion_Process = {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+    
+    $parms = @{}
+    if ($fakeBoundParameter.ComputerName) { $parms.Add("ComputerName", $fakeBoundParameter.ComputerName) }
+    if ($fakeBoundParameter.VirtualHost) { $parms.Add("VirtualHost", $fakeBoundParameter.VirtualHost) }
+    if ($fakeBoundParameter.UserName) { $parms.Add("UserName", $fakeBoundParameter.UserName) }
+    if ($fakeBoundParameter.Password) { $parms.Add("Password", $fakeBoundParameter.Password) }
+
+    Get-RabbitMQQueue @parms | where name -like "$wordToComplete*" | select name | ForEach-Object { 
+        $cname = @{$true="localhost"; $false = $fakeBoundParameter.ComputerName}[$fakeBoundParameter.ComputerName -eq $null]
+        $tooltip = $_.name + " on " + $cname + "."
+        
+        createCompletionResult $_.name $tooltip
+    }
+}
+
 function createCompletionResult([string]$value, [string]$tooltip) {
 
     if ([string]::IsNullOrEmpty($value)) { return }
@@ -142,5 +159,8 @@ $global:options['CustomArgumentCompleters']['Get-RabbitMQChannel:Name'] = $chann
 $global:options['CustomArgumentCompleters']['Get-RabbitMQChannel:VirtualHost'] = $virtualHostCompletion_Process 
 $global:options['CustomArgumentCompleters']['Get-RabbitMQChannel:ComputerName'] = $computerNameCompletion_Process 
 
+$global:options['CustomArgumentCompleters']['Get-RabbitMQQueue:Name'] = $queueCompletion_Process 
+$global:options['CustomArgumentCompleters']['Get-RabbitMQQueue:VirtualHost'] = $virtualHostCompletion_Process 
+$global:options['CustomArgumentCompleters']['Get-RabbitMQQueue:ComputerName'] = $computerNameCompletion_Process 
 
 $function:tabexpansion2 = $function:tabexpansion2 -replace 'End\r\n{','End { if ($null -ne $options) { $options += $global:options} else {$options = $global:options}'

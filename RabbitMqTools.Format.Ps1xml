@@ -432,5 +432,183 @@
 	            </TableRowEntries>
 	        </TableControl>
 	    </View>
+
+		<!-- RabbitMQ.Queue -->
+        <View>
+	        <Name>Standard</Name>
+	        <ViewSelectedBy>
+	            <TypeName>RabbitMQ.Queue</TypeName>
+	        </ViewSelectedBy>
+	        <TableControl>
+                <TableHeaders>
+	                <TableColumnHeader>
+	                    <Label>Name</Label>
+	                    <Width>34</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>VHost</Label>
+	                    <Width>25</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Params</Label>
+	                    <Width>15</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Messages   </Label>
+	                    <Width>11</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Unacked    </Label>
+	                    <Width>11</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Memory            </Label>
+	                    <Width>18</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	            </TableHeaders>
+	            <TableRowEntries>
+	                <TableRowEntry>
+	                    <TableColumnItems>
+	                        <TableColumnItem>
+	                            <PropertyName>name</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<PropertyName>vhost</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<ScriptBlock>
+									$p = @()
+									if ($_.durable) { $p += "D" }
+									if ($_.auto_delete) { $p += "AD" }
+									if ($_.arguments."x-dead-letter-exchange") { $p += "DLX" }
+									if ($_.arguments."x-message-ttl") { $p += "TTL" }
+									
+									$p -join ','
+								</ScriptBlock>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>messages</PropertyName>
+								<FormatString>{0:#,0}</FormatString>
+								<Alignment>right</Alignment>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>messages_unacknowledged</PropertyName>
+								<FormatString>{0:#,0}</FormatString>
+								<Alignment>right</Alignment>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>memory</PropertyName>
+								<FormatString>{0:#,0} B</FormatString>
+								<Alignment>right</Alignment>
+	                        </TableColumnItem>
+	                    </TableColumnItems>
+	                </TableRowEntry>
+	            </TableRowEntries>
+	        </TableControl>
+	    </View>
+
+		<!-- RabbitMQ.Queue - stats view -->
+        <View>
+	        <Name>Stats</Name>
+	        <ViewSelectedBy>
+	            <TypeName>RabbitMQ.Queue</TypeName>
+	        </ViewSelectedBy>
+	        <TableControl>
+                <TableHeaders>
+	                <TableColumnHeader>
+	                    <Label>Name</Label>
+	                    <Width>30</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>VHost</Label>
+	                    <Width>25</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+
+	                <TableColumnHeader>
+	                    <Label>Messages   </Label>
+	                    <Width>11</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Unacked    </Label>
+	                    <Width>11</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+
+	                <TableColumnHeader>
+	                    <Label>Incoming    </Label>
+	                    <Width>12</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Deliver\Get </Label>
+	                    <Width>12</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Ack         </Label>
+	                    <Width>12</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+
+				</TableHeaders>
+	            <TableRowEntries>
+	                <TableRowEntry>
+	                    <TableColumnItems>
+	                        <TableColumnItem>
+	                            <PropertyName>name</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<PropertyName>vhost</PropertyName>
+	                        </TableColumnItem>
+
+	                        <TableColumnItem>
+	                            <PropertyName>messages</PropertyName>
+								<FormatString>{0:#,0}</FormatString>
+								<Alignment>right</Alignment>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>messages_unacknowledged</PropertyName>
+								<FormatString>{0:#,0}</FormatString>
+								<Alignment>right</Alignment>
+	                        </TableColumnItem>
+
+	                        <TableColumnItem>
+								<ScriptBlock>
+									$s = $_ | select -ExpandProperty backing_queue_status
+									$s.avg_ingress_rate
+								</ScriptBlock>
+								<FormatString>{0:#,0}\s</FormatString>
+								<Alignment>right</Alignment>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<ScriptBlock>
+									$s = $_ | select -ExpandProperty backing_queue_status
+									$s.avg_egress_rate
+								</ScriptBlock>
+								<FormatString>{0:#,0}\s</FormatString>
+								<Alignment>right</Alignment>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<ScriptBlock>
+									$s = $_ | select -ExpandProperty backing_queue_status
+									$s.avg_ack_egress_rate
+								</ScriptBlock>
+								<FormatString>{0:#,0}\s</FormatString>
+								<Alignment>right</Alignment>
+	                        </TableColumnItem>
+	                    </TableColumnItems>
+	                </TableRowEntry>
+	            </TableRowEntries>
+	        </TableControl>
+	    </View>
 	</ViewDefinitions>
 </Configuration>
