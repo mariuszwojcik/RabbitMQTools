@@ -17,5 +17,7 @@
                 
     $cred = GetRabbitMqCredentials $userName $password
     $url = "http://$([System.Web.HttpUtility]::UrlEncode($computerName)):15672/api/$function"
+    Write-Verbose "Invoking REST API: $url"
+    
     return Invoke-RestMethod $url -Credential $cred
 }

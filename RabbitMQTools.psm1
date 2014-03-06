@@ -41,4 +41,4 @@ Export-ModuleMember -Function Get-RabbitMQConnection, RemoveConnection.ps1
 Export-ModuleMember -Function Get-RabbitMQNode
 Export-ModuleMember -Function Get-RabbitMQChannel
 
-Export-ModuleMember -Function Get-RabbitMQQueue, Add-RabbitMQQueue, Remove-RabbitMQQueue
+Export-ModuleMember -Function Get-RabbitMQQueue, Add-RabbitMQQueue, Remove-RabbitMQQueue, Get-RabbitMQQueueBinding

@@ -610,5 +610,55 @@
 	            </TableRowEntries>
 	        </TableControl>
 	    </View>
+
+		<!-- RabbitMQ.QueueBinding -->
+        <View>
+	        <Name>Standard</Name>
+	        <ViewSelectedBy>
+	            <TypeName>RabbitMQ.QueueBinding</TypeName>
+	        </ViewSelectedBy>
+	        <TableControl>
+                <TableHeaders>
+	                <TableColumnHeader>
+	                    <Label>VHost</Label>
+	                    <Width>25</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Exchange</Label>
+	                    <Width>20</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Queue</Label>
+	                    <Width>35</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Routing key</Label>
+	                    <Width>20</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	            </TableHeaders>
+	            <TableRowEntries>
+	                <TableRowEntry>
+	                    <TableColumnItems>
+	                        <TableColumnItem>
+	                            <PropertyName>vhost</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<PropertyName>source</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<PropertyName>destination</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<PropertyName>routing_key</PropertyName>
+	                        </TableColumnItem>
+	                    </TableColumnItems>
+	                </TableRowEntry>
+	            </TableRowEntries>
+	        </TableControl>
+	    </View>
 	</ViewDefinitions>
 </Configuration>
