@@ -1,4 +1,13 @@
-﻿$server = "192.168.232.129"
+﻿$here = Split-Path -Parent $MyInvocation.MyCommand.Path
+#$server = "192.168.232.129"
+$server = "localhost"
+
+. "$here\..\GetRabbitMQCredentials.ps1"
+. "$here\..\Constants.ps1"
+. "$here\..\Invoke_RestMethodProxy.ps1"
+. "$here\..\NamesToString.ps1"
+. "$here\..\PreventUnEscapeDotsAndSlashesOnUri.ps1"
+. "$here\..\SendItemsToOutput.ps1"
 
 
 function AssertAreEqual($actual, $expected) {
