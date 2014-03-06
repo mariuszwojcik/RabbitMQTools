@@ -15,9 +15,22 @@ $Module.OnRemove = {
 
 # Aliases
 New-Alias -Name grvh -value Get-RabbitMQVirtualHost -Description "Gets RabbitMQ's Virutal Hosts"
-New-Alias -Name grq -value Get-RabbitMQQueue -Description "Gets RabbitMQ's Queues"
-New-Alias -Name arq -value Add-RabbitMQQueue -Description "Adds RabbitMQ's Queues"
+New-Alias -Name getvhost -value Get-RabbitMQVirtualHost -Description "Gets RabbitMQ's Virutal Hosts"
+New-Alias -Name arvh -value Add-RabbitMQVirtualHost -Description "Adds RabbitMQ's Virutal Hosts"
+New-Alias -Name addvhost -value Add-RabbitMQVirtualHost -Description "Adds RabbitMQ's Virutal Hosts"
+New-Alias -Name rrvh -value Remove-RabbitMQVirtualHost -Description "Removes RabbitMQ's Virutal Hosts"
+New-Alias -Name delvhost -value Remove-RabbitMQVirtualHost -Description "Removes RabbitMQ's Virutal Hosts"
+
 New-Alias -Name gre -value Get-RabbitMQExchange -Description "Gets RabbitMQ's Exchages"
+
+New-Alias -Name grq -value Get-RabbitMQQueue -Description "Gets RabbitMQ's Queues"
+New-Alias -Name getqueue -value Get-RabbitMQQueue -Description "Gets RabbitMQ's Queues"
+New-Alias -Name arq -value Add-RabbitMQQueue -Description "Adds RabbitMQ's Queues"
+New-Alias -Name addqueue -value Add-RabbitMQQueue -Description "Adds RabbitMQ's Queues"
+New-Alias -Name rrq -value Remove-RabbitMQQueue -Description "Removes RabbitMQ's Queues"
+New-Alias -Name delqueue -value Remove-RabbitMQQueue -Description "Removes RabbitMQ's Queues"
+
+Export-ModuleMember -Alias * 
 
 # Modules
 Export-ModuleMember -Function Get-RabbitMQVirtualHost, Add-RabbitMQVirtualHost, Remove-RabbitMQVirtualHost
