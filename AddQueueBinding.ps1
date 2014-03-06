@@ -14,7 +14,7 @@
 .EXAMPLE
    Add-RabbitMQQueueBinding vh1 e1 q1 'e1-q1'
 
-   This command binds exchange "e1" with queue "q1" using routing key "e1-q1". The operation is performed on local server in virtual host vh1
+   This command binds exchange "e1" with queue "q1" using routing key "e1-q1". The operation is performed on local server in virtual host vh1.
 
 .EXAMPLE
    Add-RabbitMQQueueBinding '/' e1 q1 'e1-q1' 127.0.01
@@ -22,7 +22,6 @@
    This command binds exchange "e1" with queue "q1" using routing key "e1-q1". The operation is performed on server 127.0.0.1 in default virtual host (/).
 
 .INPUTS
-   You can pipe VirtualHost names and optionally ComputerNames to this cmdlet.
 
 .LINK
     https://www.rabbitmq.com/management.html - information about RabbitMQ management plugin.
@@ -74,7 +73,7 @@ function Add-RabbitMQQueueBinding
     }
     Process
     {
-        if ($pscmdlet.ShouldProcess("server: $ComputerName/$VirtualHost", "Add queue binding from exchange $ExchangeName to queue $Name with routing key $RoutingKey"))
+        if ($pscmdlet.ShouldProcess("$ComputerName/$VirtualHost", "Add queue binding from exchange $ExchangeName to queue $Name with routing key $RoutingKey"))
         {
             foreach($n in $Name)
             {
