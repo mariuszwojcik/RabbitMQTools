@@ -60,11 +60,46 @@ $connectionCompletion_Process = {
     }
 }
 
+$nodeCompletion_Process = {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+    
+    $parms = @{}
+    if ($fakeBoundParameter.ComputerName) { $parms.Add("ComputerName", $fakeBoundParameter.ComputerName) }
+    if ($fakeBoundParameter.UserName) { $parms.Add("UserName", $fakeBoundParameter.UserName) }
+    if ($fakeBoundParameter.Password) { $parms.Add("Password", $fakeBoundParameter.Password) }
+
+    Get-RabbitMQNode @parms | where name -like "$wordToComplete*" | select name | ForEach-Object { 
+        $cname = @{$true="localhost"; $false = $fakeBoundParameter.ComputerName}[$fakeBoundParameter.ComputerName -eq $null]
+        $tooltip = $_.name + " on " + $cname + "."
+        
+        createCompletionResult $_.name $tooltip
+    }
+}
+
+$channelCompletion_Process = {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+    
+    $parms = @{}
+    if ($fakeBoundParameter.ComputerName) { $parms.Add("ComputerName", $fakeBoundParameter.ComputerName) }
+    if ($fakeBoundParameter.VirtualHost) { $parms.Add("VirtualHost", $fakeBoundParameter.VirtualHost) }
+    if ($fakeBoundParameter.UserName) { $parms.Add("UserName", $fakeBoundParameter.UserName) }
+    if ($fakeBoundParameter.Password) { $parms.Add("Password", $fakeBoundParameter.Password) }
+
+    Get-RabbitMQChannel @parms | where name -like "$wordToComplete*" | select name | ForEach-Object { 
+        $cname = @{$true="localhost"; $false = $fakeBoundParameter.ComputerName}[$fakeBoundParameter.ComputerName -eq $null]
+        $tooltip = $_.name + " on " + $cname + "."
+        
+        createCompletionResult $_.name $tooltip
+    }
+}
+
 function createCompletionResult([string]$value, [string]$tooltip) {
 
     if ([string]::IsNullOrEmpty($value)) { return }
     if ([string]::IsNullOrEmpty($tooltip)) { $tooltip = $value }
+    
     $completionText = @{$true="'$value'"; $false=$value  }[$value -match "\W"]
+    $completionText = $completionText -replace '\[', '``[' -replace '\]', '``]'
     
     return New-Object System.Management.Automation.CompletionResult $completionText, $value, 'ParameterValue', $tooltip 
 }
@@ -99,6 +134,13 @@ $global:options['CustomArgumentCompleters']['Get-RabbitMQConnection:Name'] = $co
 $global:options['CustomArgumentCompleters']['Get-RabbitMQConnection:ComputerName'] = $computerNameCompletion_Process 
 $global:options['CustomArgumentCompleters']['Remove-RabbitMQConnection:Name'] = $connectionCompletion_Process 
 $global:options['CustomArgumentCompleters']['Remove-RabbitMQConnection:ComputerName'] = $computerNameCompletion_Process 
+
+$global:options['CustomArgumentCompleters']['Get-RabbitMQNode:Name'] = $nodeCompletion_Process 
+$global:options['CustomArgumentCompleters']['Get-RabbitMQNode:ComputerName'] = $computerNameCompletion_Process 
+
+$global:options['CustomArgumentCompleters']['Get-RabbitMQChannel:Name'] = $channelCompletion_Process 
+$global:options['CustomArgumentCompleters']['Get-RabbitMQChannel:VirtualHost'] = $virtualHostCompletion_Process 
+$global:options['CustomArgumentCompleters']['Get-RabbitMQChannel:ComputerName'] = $computerNameCompletion_Process 
 
 
 $function:tabexpansion2 = $function:tabexpansion2 -replace 'End\r\n{','End { if ($null -ne $options) { $options += $global:options} else {$options = $global:options}'
