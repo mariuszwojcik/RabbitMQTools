@@ -1,0 +1,46 @@
+	Explains what the UnEscapeDotsAndSlashed flag is and how it is used by RabbitMQTools.
+
+DESCRIPTION
+
+	Depending on the .NET Framework version you are using, the system will treat URLs which contain encoded forward slash (%2f) differently. In the .NET Framework versions earlier than 4.5 the URL which contains encoded forward slash is automatically un-escaped which changes it from something like http://localhost:15672/#/queues/%2f to http://localhost:15672/#/queues//. Unfortunately, servers will treat those two URLs as different. Especially RabbitMQ management API doesn't recognises the latter, un-escaped form and throws an exception. 
+
+	To enable support for all operations in RabbitMQ management API, the RabbitMQTools module is disabling flag called UnEscapeDotsAndSlashes in the underlying UriParser class. This allows for invoking calls to URLs containing encoded forward slash in them. Because the operation is modifying some internal state of .NET Framework objects, there is a potential risk that the behaviour related to URI management in the whole PowerShell session will be affected. 
+	
+	To minimise that risk, the RabbitMQTools module is creating a proxy over Invoke-RestMethod cmdlet which adds new switch called -AllowEscapedDotsAndSlashes. When set, and the requested URL contains encoded forward slash then before the call to the service is made, the UnEscapeDotsAndSlashes flags is disabled. After receiving response from the service, the flag is set back, so all consecutive calls will behave as expected (unless they have -AllowEscapedDotsAndSlashes set as well).
+
+	
+WHY THIS IS HAPPENNING
+
+	I found a weak explanation that this behaviour was done by design to decrease potential malicious attack. As the web has changed, the problem become less dangerous, but for compatibility reasons it was still in .NET Framework until version 4.5. You can read a bit more on the topic at: https://connect.microsoft.com/VisualStudio/feedback/details/511010/erroneous-uri-parsing-for-encoded-reserved-characters-according-to-rfc-3986
+	
+	
+I'M WORKING WITH SERVICE WHICH REQUIRES UNESCAPED FORWARD SLASH, CAN I REUSE YOUR CODE?
+
+	If you require that your URI class doesn't automatically un-escape dots and slashed that I am encouraging you to have a look at the way it is implemented in RabbitMQTools. You can find the source code on GitHub at: https://github.com/mariuszwojcik/RabbitMQTools. The files which will be of special interest to you are:
+	
+	- Invoke_RestMethodProxy.ps1
+	- PreventUnEscapeDotsAndSlashesOnUri.ps1
+
+	There also is a blog post explaining hot to implement the hack. You can find it at: http://mariuszwojcik.wordpress.com/2014/03/04/how-to-prevent-invoke-restmethod-from-un-escaping-forward-slashes/
+	
+HOW TO TEST IF MY SYSTEM IS AFFECTED
+
+	If you are using .NET Framework version earlier than 4.5 than your system is affected. Versions 4.5 and older do not automatically un-escape dots and slashes in URLs.
+	You can find a good example of how to test your system in the article at: http://mariuszwojcik.wordpress.com/2014/03/04/how-to-prevent-invoke-restmethod-from-un-escaping-forward-slashes/
+
+	
+LINKS:
+
+	http://mariuszwojcik.wordpress.com/2014/03/04/how-to-prevent-invoke-restmethod-from-un-escaping-forward-slashes/
+	
+	Blog article on how to prevent un-escaping dots and slashes in PowerShell.
+
+	
+	https://github.com/mariuszwojcik/RabbitMQTools
+	
+	Source code of the RabbitMQTools module.
+
+	
+	https://connect.microsoft.com/VisualStudio/feedback/details/511010/erroneous-uri-parsing-for-encoded-reserved-characters-according-to-rfc-3986
+	
+	A bit of explanation from Microsoft on why the un-escaping is happening.

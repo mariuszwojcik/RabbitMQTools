@@ -1,0 +1,7 @@
+.Synopsis
+	Describes how to user RabbitMQTools for managing and administering RabbitMQ servers.
+
+.DESCRIPTION
+	The RabbitMQ Tools is an open source module containing cmdlets for managing and administering RabbitMQ servers. 
+
+	Most of the cmdlets are using RabbitMQ Managing API to access and manipulate the server.
