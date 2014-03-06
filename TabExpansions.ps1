@@ -110,6 +110,23 @@ $queueCompletion_Process = {
     }
 }
 
+$routingKeyCompletion_Process = {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+    
+    $parms = @{}
+    if ($fakeBoundParameter.ComputerName) { $parms.Add("ComputerName", $fakeBoundParameter.ComputerName) }
+    if ($fakeBoundParameter.VirtualHost) { $parms.Add("VirtualHost", $fakeBoundParameter.VirtualHost) }
+    if ($fakeBoundParameter.UserName) { $parms.Add("UserName", $fakeBoundParameter.UserName) }
+    if ($fakeBoundParameter.Password) { $parms.Add("Password", $fakeBoundParameter.Password) }
+
+    $tooltip = "Bind exchange " + $fakeBoundParameter.ExchangeName + " to queue " + $fakeBoundParameter.Name + "."
+        
+    createCompletionResult $fakeBoundParameter.Name $tooltip
+    createCompletionResult $($fakeBoundParameter.ExchangeName + "-" + $fakeBoundParameter.Name) $tooltip
+    createCompletionResult $($fakeBoundParameter.ExchangeName + "->" + $fakeBoundParameter.Name) $tooltip
+    createCompletionResult $($fakeBoundParameter.ExchangeName + ".." + $fakeBoundParameter.Name) $tooltip
+}
+
 function createCompletionResult([string]$value, [string]$tooltip) {
 
     if ([string]::IsNullOrEmpty($value)) { return }
@@ -171,5 +188,10 @@ $global:options['CustomArgumentCompleters']['Remove-RabbitMQQueue:ComputerName']
 $global:options['CustomArgumentCompleters']['Get-RabbitMQQueueBinding:Name'] = $queueCompletion_Process 
 $global:options['CustomArgumentCompleters']['Get-RabbitMQQueueBinding:VirtualHost'] = $virtualHostCompletion_Process 
 $global:options['CustomArgumentCompleters']['Get-RabbitMQQueueBinding:ComputerName'] = $computerNameCompletion_Process 
+$global:options['CustomArgumentCompleters']['Add-RabbitMQQueueBinding:Name'] = $queueCompletion_Process 
+$global:options['CustomArgumentCompleters']['Add-RabbitMQQueueBinding:VirtualHost'] = $virtualHostCompletion_Process 
+$global:options['CustomArgumentCompleters']['Add-RabbitMQQueueBinding:ComputerName'] = $computerNameCompletion_Process 
+$global:options['CustomArgumentCompleters']['Add-RabbitMQQueueBinding:ExchangeName'] = $exchangeCompletion_Process 
+$global:options['CustomArgumentCompleters']['Add-RabbitMQQueueBinding:RoutingKey'] = $routingKeyCompletion_Process
 
 $function:tabexpansion2 = $function:tabexpansion2 -replace 'End\r\n{','End { if ($null -ne $options) { $options += $global:options} else {$options = $global:options}'

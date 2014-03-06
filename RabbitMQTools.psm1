@@ -29,6 +29,8 @@ New-Alias -Name arq -value Add-RabbitMQQueue -Description "Adds RabbitMQ's Queue
 New-Alias -Name addqueue -value Add-RabbitMQQueue -Description "Adds RabbitMQ's Queues"
 New-Alias -Name rrq -value Remove-RabbitMQQueue -Description "Removes RabbitMQ's Queues"
 New-Alias -Name delqueue -value Remove-RabbitMQQueue -Description "Removes RabbitMQ's Queues"
+New-Alias -Name getqueuebinding -value Get-RabbitMQQueueBinding -Description "Gets bindings for RabbitMQ Queues"
+New-Alias -Name addqueuebinding -value Add-RabbitMQQueueBinding -Description "Adds bindings betwen RabbitMQ exchange and queue"
 
 Export-ModuleMember -Alias * 
 
@@ -41,4 +43,4 @@ Export-ModuleMember -Function Get-RabbitMQConnection, RemoveConnection.ps1
 Export-ModuleMember -Function Get-RabbitMQNode
 Export-ModuleMember -Function Get-RabbitMQChannel
 
-Export-ModuleMember -Function Get-RabbitMQQueue, Add-RabbitMQQueue, Remove-RabbitMQQueue, Get-RabbitMQQueueBinding
+Export-ModuleMember -Function Get-RabbitMQQueue, Add-RabbitMQQueue, Remove-RabbitMQQueue, Get-RabbitMQQueueBinding, Add-RabbitMQQueueBinding
