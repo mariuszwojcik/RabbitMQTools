@@ -660,5 +660,55 @@
 	            </TableRowEntries>
 	        </TableControl>
 	    </View>
-	</ViewDefinitions>
+
+		<!-- RabbitMQ.QueueBinding -->
+        <View>
+	        <Name>Standard</Name>
+	        <ViewSelectedBy>
+	            <TypeName>RabbitMQ.QueueMessage</TypeName>
+	        </ViewSelectedBy>
+	        <TableControl>
+                <TableHeaders>
+	                <TableColumnHeader>
+	                    <Label>  #</Label>
+	                    <Width>3</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Queue</Label>
+	                    <Width>20</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>R</Label>
+	                    <Width>1</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Payload</Label>
+	                    <Width>95</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	            </TableHeaders>
+	            <TableRowEntries>
+	                <TableRowEntry>
+	                    <TableColumnItems>
+	                        <TableColumnItem>
+	                            <PropertyName>no</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<PropertyName>QueueName</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<ScriptBlock>@{$true="*";$false=" "}[$_.redelivered]</ScriptBlock>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<PropertyName>payload</PropertyName>
+	                        </TableColumnItem>
+	                    </TableColumnItems>
+	                </TableRowEntry>
+	            </TableRowEntries>
+	        </TableControl>
+	    </View>
+		</ViewDefinitions>
 </Configuration>

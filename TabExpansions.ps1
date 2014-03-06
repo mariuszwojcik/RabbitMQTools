@@ -219,4 +219,8 @@ $global:options['CustomArgumentCompleters']['Remove-RabbitMQQueueBinding:Compute
 $global:options['CustomArgumentCompleters']['Remove-RabbitMQQueueBinding:ExchangeName'] = $exchangeCompletion_Process 
 $global:options['CustomArgumentCompleters']['Remove-RabbitMQQueueBinding:RoutingKey'] = $routingKeyCompletion_Process
 
+$global:options['CustomArgumentCompleters']['Get-RabbitMQMessage:Name'] = $queueCompletion_Process 
+$global:options['CustomArgumentCompleters']['Get-RabbitMQMessage:VirtualHost'] = $virtualHostCompletion_Process 
+$global:options['CustomArgumentCompleters']['Get-RabbitMQMessage:ComputerName'] = $computerNameCompletion_Process 
+
 $function:tabexpansion2 = $function:tabexpansion2 -replace 'End\r\n{','End { if ($null -ne $options) { $options += $global:options} else {$options = $global:options}'

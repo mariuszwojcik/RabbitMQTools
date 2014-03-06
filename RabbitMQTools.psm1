@@ -32,6 +32,8 @@ New-Alias -Name delqueue -value Remove-RabbitMQQueue -Description "Removes Rabbi
 New-Alias -Name getqueuebinding -value Get-RabbitMQQueueBinding -Description "Gets bindings for RabbitMQ Queues"
 New-Alias -Name addqueuebinding -value Add-RabbitMQQueueBinding -Description "Adds bindings betwen RabbitMQ exchange and queue"
 
+New-Alias -Name getmessage -value Get-RabbitMQMessage -Description "Gets messages from RabbitMQ queue"
+
 Export-ModuleMember -Alias * 
 
 # Modules
@@ -44,3 +46,5 @@ Export-ModuleMember -Function Get-RabbitMQNode
 Export-ModuleMember -Function Get-RabbitMQChannel
 
 Export-ModuleMember -Function Get-RabbitMQQueue, Add-RabbitMQQueue, Remove-RabbitMQQueue, Get-RabbitMQQueueBinding, Add-RabbitMQQueueBinding, Remove-RabbitMQQueueBinding
+
+Export-ModuleMember -Function Get-RabbitMQMessage
