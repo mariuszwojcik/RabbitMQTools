@@ -356,5 +356,81 @@
 	            </TableRowEntries>
 	        </TableControl>
 	    </View>
+
+		<!-- RabbitMQ.Channel -->
+        <View>
+	        <Name>RabbitMQ</Name>
+	        <ViewSelectedBy>
+	            <TypeName>RabbitMQ.Channel</TypeName>
+	        </ViewSelectedBy>
+	        <TableControl>
+                <TableHeaders>
+	                <TableColumnHeader>
+	                    <Label>Computer name</Label>
+	                    <Width>15</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>VHost</Label>
+	                    <Width>15</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Name</Label>
+	                    <Width>40</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Prefetch</Label>
+	                    <Width>15</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>flow</Label>
+	                    <Width>7</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Unacked</Label>
+	                    <Width>10</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Unconfirmed</Label>
+	                    <Width>11</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+	            </TableHeaders>
+	            <TableRowEntries>
+	                <TableRowEntry>
+	                    <TableColumnItems>
+	                        <TableColumnItem>
+	                            <PropertyName>ComputerName</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<PropertyName>vhost</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>name</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>prefetch_count</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<ScriptBlock>
+									[String]::Format("{0}", @{$true="blocked"; $false=""}[$_.client_flow_blocked])
+								</ScriptBlock>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>messages_unacknowledged</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>messages_unconfirmed</PropertyName>
+	                        </TableColumnItem>
+	                    </TableColumnItems>
+	                </TableRowEntry>
+	            </TableRowEntries>
+	        </TableControl>
+	    </View>
 	</ViewDefinitions>
 </Configuration>
