@@ -91,25 +91,16 @@ function Remove-RabbitMQExchange
     }
     Process
     {
-        if ($pscmdlet.ShouldProcess("server: $ComputerName, vhost: $VirtualHost", "Remove exchange(s): $(NamesToString $Name '(all)')")) {
-            
-            if ($VirtualHost -eq "/") { PreventUnEscapeDotsAndSlashesOnUri }
-
-            try
+        if ($pscmdlet.ShouldProcess("server: $ComputerName, vhost: $VirtualHost", "Remove exchange(s): $(NamesToString $Name '(all)')"))
+        {
+            foreach($n in $Name)
             {
-                foreach($n in $Name)
-                {
-                    $url = "http://$([System.Web.HttpUtility]::UrlEncode($ComputerName)):15672/api/exchanges/$([System.Web.HttpUtility]::UrlEncode($VirtualHost))/$([System.Web.HttpUtility]::UrlEncode($n))"
+                $url = "http://$([System.Web.HttpUtility]::UrlEncode($ComputerName)):15672/api/exchanges/$([System.Web.HttpUtility]::UrlEncode($VirtualHost))/$([System.Web.HttpUtility]::UrlEncode($n))"
         
-                    $result = Invoke-RestMethod $url -Credential $cred -ErrorAction Continue -Method Delete
+                $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -ErrorAction Continue -Method Delete
 
-                    Write-Verbose "Deleted Exchange $n on server $ComputerName, Virtual Host $VirtualHost"
-                    $cnt++
-                }
-}
-            finally
-            {
-                if ($VirtualHost -eq "/") { RestoreUriParserFlags }
+                Write-Verbose "Deleted Exchange $n on server $ComputerName, Virtual Host $VirtualHost"
+                $cnt++
             }
         }
     }

@@ -49,9 +49,3 @@ function RestoreUriParserFlags
 
 if (-not $defaultUriParserFlagsValue) { Set-Variable -Option ReadOnly -Scope Script -name defaultUriParserFlagsValue -value (GetUriParserFlags) }
 if (-not $uriUnEscapesDotsAndSlashes) { Set-Variable -Option ReadOnly -Scope Script -name uriUnEscapesDotsAndSlashes -value (($defaultUriParserFlagsValue -band $UnEscapeDotsAndSlashes) -eq $UnEscapeDotsAndSlashes) }
-
-
-if ($uriUnEscapesDotsAndSlashes)
-{
-    Write-Host -ForegroundColor Red "The default URI behaviour is to un-escape dots and slahes which may prevent module from working correctly. The behaviour will be overriden on some cases. To learn more please read get-help about_UnEsapingDotsAndSlashes."
-}

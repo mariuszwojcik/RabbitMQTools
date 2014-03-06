@@ -130,24 +130,15 @@ function Add-RabbitMQExchange
 
             $bodyJson = $body | ConvertTo-Json
 
-            if ($VirtualHost -eq "/") { PreventUnEscapeDotsAndSlashesOnUri }
-
-            try
+            foreach($n in $Name)
             {
-                foreach($n in $Name)
-                {
-                    $url = "http://$([System.Web.HttpUtility]::UrlEncode($ComputerName)):15672/api/exchanges/$([System.Web.HttpUtility]::UrlEncode($VirtualHost))/$([System.Web.HttpUtility]::UrlEncode($n))"
-                    $uri = New-Object Uri $url
+                $url = "http://$([System.Web.HttpUtility]::UrlEncode($ComputerName)):15672/api/exchanges/$([System.Web.HttpUtility]::UrlEncode($VirtualHost))/$([System.Web.HttpUtility]::UrlEncode($n))"
+                $uri = New-Object Uri $url
         
-                    $result = Invoke-RestMethod $uri -Credential $cred -ErrorAction Continue -Method Put -ContentType "application/json" -Body $bodyJson
+                $result = Invoke-RestMethod $uri -Credential $cred -AllowEscapedDotsAndSlashes -ErrorAction Continue -Method Put -ContentType "application/json" -Body $bodyJson
 
-                    Write-Verbose "Created Exchange $n on server $ComputerName, Virtual Host $VirtualHost"
-                    $cnt++
-                }
-}
-            finally
-            {
-                if ($VirtualHost -eq "/") { RestoreUriParserFlags }
+                Write-Verbose "Created Exchange $n on server $ComputerName, Virtual Host $VirtualHost"
+                $cnt++
             }
         }
     }

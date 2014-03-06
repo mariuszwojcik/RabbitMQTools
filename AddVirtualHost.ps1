@@ -11,6 +11,8 @@
 
    The cmdlet is using REST Api provided by RabbitMQ Management Plugin. For more information go to: https://www.rabbitmq.com/management.html
 
+   To support requests using default virtual host (/), the cmdlet will temporarily disable UnEscapeDotsAndSlashes flag on UriParser. For more information check get-help about_UnEsapingDotsAndSlashes.
+
 .EXAMPLE
    Add-RabbitMQVirtualHost testHost
 
@@ -96,7 +98,7 @@ function Add-RabbitMQVirtualHost
         foreach($n in $Name)
         {
             $url = "http://$([System.Web.HttpUtility]::UrlEncode($ComputerName)):15672/api/vhosts/$([System.Web.HttpUtility]::UrlEncode($n))"
-            $result = Invoke-RestMethod $url -Credential $cred -ErrorAction Continue -Method Put -ContentType "application/json"
+            $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -ErrorAction Continue -Method Put -ContentType "application/json"
 
             Write-Verbose "Created Virtual Host $n on server $ComputerName"
             $cnt++
