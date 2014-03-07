@@ -88,7 +88,7 @@ function Get-RabbitMQMessage
     }
     Process
     {
-        [string]$s
+        [string]$s = ""
         if ([bool]$Remove) { $s = "Messages will be removed from the queue." } else {$s = "Messages will be requeued."}
         if ($pscmdlet.ShouldProcess("server: $ComputerName/$VirtualHost", "Get $Count message(s) from queue $Name. $s"))
         {
@@ -108,7 +108,6 @@ function Get-RabbitMQMessage
 
             $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -ErrorAction Continue -Method Post -ContentType "application/json" -Body $bodyJson
 
-            #$result | Add-Member -NotePropertyName "no" -NotePropertyValue $cnt++
             $result | Add-Member -NotePropertyName "QueueName" -NotePropertyValue $Name
 
             foreach ($item in $result)
