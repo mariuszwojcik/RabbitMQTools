@@ -111,8 +111,30 @@
                 PreventUnEscapeDotsAndSlashesOnUri
             }
 
-            $steppablePipeline.Process($_)
-        } catch {
+            $retryCount = 0
+            $this = $_
+
+            while ($true)
+            {
+                try
+                {
+                    $steppablePipeline.Process($this)
+                    break
+                }
+                catch [System.Net.WebException]
+                {
+                    if ($_.Exception.Status -ne "KeepAliveFailure" -and $_.Exception.Status -ne "SendFailure") { throw }
+                    if ($retryCount++ -gt 3) { throw }
+
+                    Write-Warning "REST API operation failed $retryCount time(s) and will be retired. URI: $Uri"
+
+                    $scriptCmd = {& $wrappedCmd @PSBoundParameters }
+                    $steppablePipeline = $scriptCmd.GetSteppablePipeline($myInvocation.CommandOrigin)
+                }
+            }
+        } 
+        catch 
+        {
             throw
         }
         finally {
