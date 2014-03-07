@@ -223,4 +223,18 @@ $global:options['CustomArgumentCompleters']['Get-RabbitMQMessage:Name'] = $queue
 $global:options['CustomArgumentCompleters']['Get-RabbitMQMessage:VirtualHost'] = $virtualHostCompletion_Process 
 $global:options['CustomArgumentCompleters']['Get-RabbitMQMessage:ComputerName'] = $computerNameCompletion_Process 
 
+$global:options['CustomArgumentCompleters']['Clear-RabbitMQQueue:Name'] = $queueCompletion_Process 
+$global:options['CustomArgumentCompleters']['Clear-RabbitMQQueue:VirtualHost'] = $virtualHostCompletion_Process 
+$global:options['CustomArgumentCompleters']['Clear-RabbitMQQueue:ComputerName'] = $computerNameCompletion_Process 
+
+$global:options['CustomArgumentCompleters']['Copy-RabbitMQMessage:SourceQueueName'] = $queueCompletion_Process 
+$global:options['CustomArgumentCompleters']['Copy-RabbitMQMessage:DestinationQueueName'] = $queueCompletion_Process 
+$global:options['CustomArgumentCompleters']['Copy-RabbitMQMessage:VirtualHost'] = $virtualHostCompletion_Process 
+$global:options['CustomArgumentCompleters']['Copy-RabbitMQMessage:ComputerName'] = $computerNameCompletion_Process 
+
+$global:options['CustomArgumentCompleters']['Move-RabbitMQMessage:SourceQueueName'] = $queueCompletion_Process 
+$global:options['CustomArgumentCompleters']['Move-RabbitMQMessage:DestinationQueueName'] = $queueCompletion_Process 
+$global:options['CustomArgumentCompleters']['Move-RabbitMQMessage:VirtualHost'] = $virtualHostCompletion_Process 
+$global:options['CustomArgumentCompleters']['Move-RabbitMQMessage:ComputerName'] = $computerNameCompletion_Process 
+
 $function:tabexpansion2 = $function:tabexpansion2 -replace 'End\r\n{','End { if ($null -ne $options) { $options += $global:options} else {$options = $global:options}'

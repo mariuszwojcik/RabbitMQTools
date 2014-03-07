@@ -47,4 +47,4 @@ Export-ModuleMember -Function Get-RabbitMQChannel
 
 Export-ModuleMember -Function Get-RabbitMQQueue, Add-RabbitMQQueue, Remove-RabbitMQQueue, Get-RabbitMQQueueBinding, Add-RabbitMQQueueBinding, Remove-RabbitMQQueueBinding
 
-Export-ModuleMember -Function Get-RabbitMQMessage
+Export-ModuleMember -Function Get-RabbitMQMessage, Add-RabbitMQMessage, Copy-RabbitMQMessage, Move-RabbitMQMessage, Clear-RabbitMQQueue
