@@ -75,7 +75,11 @@ function Get-RabbitMQMessage
 
         # Indicates whether messages body should be truncated to given size (in bytes).
         [parameter(ValueFromPipelineByPropertyName=$true)]
-        [int]$Truncate
+        [int]$Truncate,
+
+        # Indicates whether command should return message body
+        [parameter(ValueFromPipelineByPropertyName=$true)]
+        [switch]$ShowBody
     )
 
     Begin
@@ -116,7 +120,18 @@ function Get-RabbitMQMessage
                 $item | Add-Member -NotePropertyName "no" -NotePropertyValue $cnt
             }
 
-            SendItemsToOutput $result "RabbitMQ.QueueMessage"
+            if ($ShowBody) 
+            {
+                foreach ($item in $result)
+                {
+                    Write-Output $item.payload | ConvertFrom-Json
+                    Write-Output ""
+                }
+            }
+            else
+            {
+                SendItemsToOutput $result "RabbitMQ.QueueMessage"
+            }
 
         }
     }
