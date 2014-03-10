@@ -102,11 +102,12 @@ $queueCompletion_Process = {
     if ($fakeBoundParameter.UserName) { $parms.Add("UserName", $fakeBoundParameter.UserName) }
     if ($fakeBoundParameter.Password) { $parms.Add("Password", $fakeBoundParameter.Password) }
 
-    Get-RabbitMQQueue @parms | where name -like "$wordToComplete*" | select name | ForEach-Object { 
+    Get-RabbitMQQueue @parms | where name -like "$wordToComplete*" | ForEach-Object { 
         $cname = @{$true="localhost"; $false = $fakeBoundParameter.ComputerName}[$fakeBoundParameter.ComputerName -eq $null]
-        $tooltip = $_.name + " on " + $cname + "."
-        
-        createCompletionResult $_.name $tooltip
+        $n = "$($_.name) ($($_.messages))"
+        $tooltip = "$($_.name) on $cname/$($_.vhost) ($($_.messages) messages)."
+
+        createCompletionResult $n $_.name $tooltip
     }
 }
 
@@ -149,6 +150,9 @@ $routingKeyCompletion_Process = {
 
 function createCompletionResult([string]$value, [string]$tooltip) {
 
+    return createCompletionResult $value $value $tooltip
+
+    <#
     if ([string]::IsNullOrEmpty($value)) { return }
     if ([string]::IsNullOrEmpty($tooltip)) { $tooltip = $value }
     
@@ -156,9 +160,20 @@ function createCompletionResult([string]$value, [string]$tooltip) {
     $completionText = $completionText -replace '\[', '``[' -replace '\]', '``]'
     
     return New-Object System.Management.Automation.CompletionResult $completionText, $value, 'ParameterValue', $tooltip 
+    #>
 }
 
+function createCompletionResult([string]$text, [string]$value, [string]$tooltip) {
 
+    if ([string]::IsNullOrEmpty($value)) { return }
+    if ([string]::IsNullOrEmpty($text)) { $text = $value }
+    if ([string]::IsNullOrEmpty($tooltip)) { $tooltip = $value }
+    
+    $completionText = @{$true="'$value'"; $false=$value  }[$value -match "\W"]
+    $completionText = $completionText -replace '\[', '``[' -replace '\]', '``]'
+    
+    return New-Object System.Management.Automation.CompletionResult $completionText, $text, 'ParameterValue', $tooltip 
+}
 
 if (-not $global:options) { $global:options = @{CustomArgumentCompleters = @{};NativeArgumentCompleters = @{}}}
 
