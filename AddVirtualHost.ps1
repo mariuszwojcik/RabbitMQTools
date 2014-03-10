@@ -98,7 +98,7 @@ function Add-RabbitMQVirtualHost
         foreach($n in $Name)
         {
             $url = "http://$([System.Web.HttpUtility]::UrlEncode($ComputerName)):15672/api/vhosts/$([System.Web.HttpUtility]::UrlEncode($n))"
-            $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -ErrorAction Continue -Method Put -ContentType "application/json"
+            $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -DisableKeepAlive -ErrorAction Continue -Method Put -ContentType "application/json"
 
             Write-Verbose "Created Virtual Host $n on server $ComputerName"
             $cnt++

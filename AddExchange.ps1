@@ -133,9 +133,9 @@ function Add-RabbitMQExchange
             foreach($n in $Name)
             {
                 $url = "http://$([System.Web.HttpUtility]::UrlEncode($ComputerName)):15672/api/exchanges/$([System.Web.HttpUtility]::UrlEncode($VirtualHost))/$([System.Web.HttpUtility]::UrlEncode($n))"
-                $uri = New-Object Uri $url
+                Write-Verbose "Invoking REST API: $url"
         
-                $result = Invoke-RestMethod $uri -Credential $cred -AllowEscapedDotsAndSlashes -ErrorAction Continue -Method Put -ContentType "application/json" -Body $bodyJson
+                $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -DisableKeepAlive -ErrorAction Continue -Method Put -ContentType "application/json" -Body $bodyJson
 
                 Write-Verbose "Created Exchange $n on server $ComputerName, Virtual Host $VirtualHost"
                 $cnt++

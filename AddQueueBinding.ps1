@@ -85,7 +85,7 @@ function Add-RabbitMQQueueBinding
                 }
 
                 $bodyJson = $body | ConvertTo-Json
-                $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -ErrorAction Continue -Method Post -ContentType "application/json" -Body $bodyJson
+                $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -DisableKeepAlive -ErrorAction Continue -Method Post -ContentType "application/json" -Body $bodyJson
 
                 Write-Verbose "Bound exchange $ExchangeName to queue $Name $n on $ComputerName/$VirtualHost"
                 $cnt++

@@ -108,7 +108,7 @@ function Add-RabbitMQQueue
                 if ($AutoDelete) { $body.Add("auto_delete", $true) }
 
                 $bodyJson = $body | ConvertTo-Json
-                $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -ErrorAction Continue -Method Put -ContentType "application/json" -Body $bodyJson
+                $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -DisableKeepAlive -ErrorAction Continue -Method Put -ContentType "application/json" -Body $bodyJson
 
                 Write-Verbose "Created Queue $n on $ComputerName/$VirtualHost"
                 $cnt++

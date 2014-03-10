@@ -97,7 +97,7 @@ function Remove-RabbitMQExchange
             {
                 $url = "http://$([System.Web.HttpUtility]::UrlEncode($ComputerName)):15672/api/exchanges/$([System.Web.HttpUtility]::UrlEncode($VirtualHost))/$([System.Web.HttpUtility]::UrlEncode($n))"
         
-                $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -ErrorAction Continue -Method Delete
+                $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -DisableKeepAlive -ErrorAction Continue -Method Delete
 
                 Write-Verbose "Deleted Exchange $n on server $ComputerName, Virtual Host $VirtualHost"
                 $cnt++

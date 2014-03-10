@@ -98,9 +98,9 @@ function Copy-RabbitMQMessage
         {
             $ename = "RabbitMQTools_copy"
             $routingKey = "RabbitMQTools_copy"
-            Add-RabbitMQExchange -VirtualHost $vhost -Type fanout -AutoDelete -Name $ename
-            Add-RabbitMQQueueBinding -VirtualHost $vhost -ExchangeName $ename -Name $srcq  -RoutingKey $routingKey
-            Add-RabbitMQQueueBinding -VirtualHost $vhost -ExchangeName $ename -Name $destq -RoutingKey $routingKey
+            Add-RabbitMQExchange -VirtualHost $VirtualHost -Type fanout -AutoDelete -Name $ename
+            Add-RabbitMQQueueBinding -VirtualHost $VirtualHost -ExchangeName $ename -Name $SourceQueueName  -RoutingKey $routingKey
+            Add-RabbitMQQueueBinding -VirtualHost $VirtualHost -ExchangeName $ename -Name $DestinationQueueName -RoutingKey $routingKey
 
             try
             {
@@ -116,10 +116,14 @@ function Copy-RabbitMQMessage
                     $m = Get-RabbitMQMessage $VirtualHost $SourceQueueName
 
                     # publish message to copying exchange, this will publish it onto dest queue as well as src queue.
-                    Add-RabbitMQMessage $vhost $ename $routingKey $m.payload $m.properties
+                    Add-RabbitMQMessage $VirtualHost $ename $routingKey $m.payload $m.properties
 
                     # remove message from src queue. It has been published step earlier.
                     if ($requiresMessageRemoval) { $m = Get-RabbitMQMessage $VirtualHost $SourceQueueName -Remove }
+
+                    [int]$p = ($i * 100) / $Count
+                    if ($p -gt 100) { $p = 100 }
+                    Write-Progress -Activity "Copying messages from $SourceQueueName to $DestinationQueueName" -Status "Copying message %i out of $Count" -PercentComplete $p
 
                     Write-Verbose "published message $i out of $Count"
                     $cnt++
@@ -127,7 +131,7 @@ function Copy-RabbitMQMessage
             }
             finally
             {
-                Remove-RabbitMQExchange -VirtualHost $vhost -Name $ename -Confirm:$false
+                Remove-RabbitMQExchange -VirtualHost $VirtualHost -Name $ename -Confirm:$false
             }
         }
     }
