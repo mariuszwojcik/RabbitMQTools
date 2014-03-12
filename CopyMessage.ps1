@@ -98,13 +98,13 @@ function Copy-RabbitMQMessage
         {
             $ename = "RabbitMQTools_copy"
             $routingKey = "RabbitMQTools_copy"
-            Add-RabbitMQExchange -VirtualHost $VirtualHost -Type fanout -AutoDelete -Name $ename
-            Add-RabbitMQQueueBinding -VirtualHost $VirtualHost -ExchangeName $ename -Name $SourceQueueName  -RoutingKey $routingKey
-            Add-RabbitMQQueueBinding -VirtualHost $VirtualHost -ExchangeName $ename -Name $DestinationQueueName -RoutingKey $routingKey
+            Add-RabbitMQExchange -ComputerName $ComputerName -VirtualHost $VirtualHost -Type fanout -AutoDelete -Name $ename
+            Add-RabbitMQQueueBinding -ComputerName $ComputerName -VirtualHost $VirtualHost -ExchangeName $ename -Name $SourceQueueName  -RoutingKey $routingKey
+            Add-RabbitMQQueueBinding -ComputerName $ComputerName -VirtualHost $VirtualHost -ExchangeName $ename -Name $DestinationQueueName -RoutingKey $routingKey
 
             try
             {
-                $m = Get-RabbitMQMessage $VirtualHost $SourceQueueName
+                $m = Get-RabbitMQMessage -ComputerName $ComputerName $VirtualHost $SourceQueueName
                 $c = $m.message_count + 1
 
                 if ($Count -eq 0 -or $Count -gt $c ) { $Count = $c }
@@ -113,17 +113,17 @@ function Copy-RabbitMQMessage
                 for ($i = 1; $i -le $Count; $i++)
                 {
                     # get message to be copies, but do not remove it from the server yet.
-                    $m = Get-RabbitMQMessage $VirtualHost $SourceQueueName
+                    $m = Get-RabbitMQMessage -ComputerName $ComputerName $VirtualHost $SourceQueueName
 
                     # publish message to copying exchange, this will publish it onto dest queue as well as src queue.
-                    Add-RabbitMQMessage $VirtualHost $ename $routingKey $m.payload $m.properties
+                    Add-RabbitMQMessage -ComputerName $ComputerName $VirtualHost $ename $routingKey $m.payload $m.properties
 
                     # remove message from src queue. It has been published step earlier.
-                    if ($requiresMessageRemoval) { $m = Get-RabbitMQMessage $VirtualHost $SourceQueueName -Remove }
+                    if ($requiresMessageRemoval) { $m = Get-RabbitMQMessage -ComputerName $ComputerName $VirtualHost $SourceQueueName -Remove }
 
                     [int]$p = ($i * 100) / $Count
                     if ($p -gt 100) { $p = 100 }
-                    Write-Progress -Activity "Copying messages from $SourceQueueName to $DestinationQueueName" -Status "Copying message %i out of $Count" -PercentComplete $p
+                    Write-Progress -Activity "Copying messages from $SourceQueueName to $DestinationQueueName" -Status "Copying message $i out of $Count" -PercentComplete $p
 
                     Write-Verbose "published message $i out of $Count"
                     $cnt++
@@ -131,7 +131,7 @@ function Copy-RabbitMQMessage
             }
             finally
             {
-                Remove-RabbitMQExchange -VirtualHost $VirtualHost -Name $ename -Confirm:$false
+                Remove-RabbitMQExchange -ComputerName $ComputerName -VirtualHost $VirtualHost -Name $ename -Confirm:$false
             }
         }
     }

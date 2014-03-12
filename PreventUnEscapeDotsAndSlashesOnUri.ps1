@@ -1,4 +1,4 @@
-﻿if (-not $UnEscapeDotsAndSlashes) { Set-Variable -Option ReadOnly -Scope Script -name UnEscapeDotsAndSlashes -value 0x2000000 }
+﻿if (-not $UnEscapeDotsAndSlashes) { Set-Variable -Scope Script -name UnEscapeDotsAndSlashes -value 0x2000000 }
 
 function GetUriParserFlags
 {
@@ -47,5 +47,5 @@ function RestoreUriParserFlags
     }
 }
 
-if (-not $defaultUriParserFlagsValue) { Set-Variable -Option ReadOnly -Scope Script -name defaultUriParserFlagsValue -value (GetUriParserFlags) }
-if (-not $uriUnEscapesDotsAndSlashes) { Set-Variable -Option ReadOnly -Scope Script -name uriUnEscapesDotsAndSlashes -value (($defaultUriParserFlagsValue -band $UnEscapeDotsAndSlashes) -eq $UnEscapeDotsAndSlashes) }
+if (-not $defaultUriParserFlagsValue) { Set-Variable -Scope Script -name defaultUriParserFlagsValue -value (GetUriParserFlags) }
+if (-not $uriUnEscapesDotsAndSlashes) { Set-Variable -Scope Script -name uriUnEscapesDotsAndSlashes -value (($defaultUriParserFlagsValue -band $UnEscapeDotsAndSlashes) -eq $UnEscapeDotsAndSlashes) }

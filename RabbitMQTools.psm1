@@ -1,16 +1,16 @@
-﻿if (Test-Path Function:TabExpansion2) {
-    $OldTabExpansion = Get-Content Function:TabExpansion2
-}
-
-$Module = $MyInvocation.MyCommand.ScriptBlock.Module 
-$Module.OnRemove = {
-
-    #$Function:TabExpansion2 = $OldTabExpansion
-
-    #Remove-Variable -name UnEscapeDotsAndSlashes -Force
-    #Remove-Variable -name defaultUriParserFlagsValue -Force
-    #Remove-Variable -name uriUnEscapesDotsAndSlashes -Force
-}
+﻿#if (Test-Path Function:TabExpansion2) {
+#    $OldTabExpansion = Get-Content Function:TabExpansion2
+#}
+#
+#$Module = $MyInvocation.MyCommand.ScriptBlock.Module 
+#$Module.OnRemove = {
+#
+#    #$Function:TabExpansion2 = $OldTabExpansion
+#
+#    Remove-Variable -name 'UnEscapeDotsAndSlashes' -Force
+#    Remove-Variable -name 'defaultUriParserFlagsValue' -Force
+#    Remove-Variable -name 'uriUnEscapesDotsAndSlashes' -Force
+#}
 
 
 Register-RabbitMQServer 'localhost' -WarningAction SilentlyContinue
