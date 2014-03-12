@@ -1,10 +1,7 @@
 ﻿$computerNameCompletion_Process = {
     param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
     
-    $items = @()
-    $items += New-Object System.Management.Automation.CompletionResult "localhost", "localhost", 'ParameterValue', "Local computer"
-
-    $items | where ListItemText -like "$wordToComplete*"
+    $global:RabbitMQServers
 }
 
 $virtualHostCompletion_Process = {
@@ -20,7 +17,7 @@ $virtualHostCompletion_Process = {
         $cname = @{$true="localhost"; $false = $fakeBoundParameter.ComputerName}[$fakeBoundParameter.ComputerName -eq $null]
         $tooltip = "$vhname on $cname."
         
-        createCompletionResult $_.name $tooltip
+        createCompletionResult $_.name $_.name $tooltip
     }
 }
 
@@ -39,8 +36,7 @@ $exchangeCompletion_Process = {
         $cname = @{$true="localhost"; $false = $fakeBoundParameter.ComputerName}[$fakeBoundParameter.ComputerName -eq $null]
         $tooltip = "$ename on $cname/$vhname."
         
-        #New-Object System.Management.Automation.CompletionResult $ename, $ename, 'ParameterValue', $tooltip 
-        createCompletionResult $ename $tooltip
+        createCompletionResult $ename $ename $tooltip
     }
 }
 
@@ -56,7 +52,7 @@ $connectionCompletion_Process = {
         $cname = @{$true="localhost"; $false = $fakeBoundParameter.ComputerName}[$fakeBoundParameter.ComputerName -eq $null]
         $tooltip = "$_.name on $cname."
         
-        createCompletionResult $_.name $tooltip
+        createCompletionResult $_.name $_.name $tooltip
     }
 }
 
@@ -72,7 +68,7 @@ $nodeCompletion_Process = {
         $cname = @{$true="localhost"; $false = $fakeBoundParameter.ComputerName}[$fakeBoundParameter.ComputerName -eq $null]
         $tooltip = $_.name + " on " + $cname + "."
         
-        createCompletionResult $_.name $tooltip
+        createCompletionResult $_.name $_.name $tooltip
     }
 }
 
@@ -89,7 +85,7 @@ $channelCompletion_Process = {
         $cname = @{$true="localhost"; $false = $fakeBoundParameter.ComputerName}[$fakeBoundParameter.ComputerName -eq $null]
         $tooltip = $_.name + " on " + $cname + "."
         
-        createCompletionResult $_.name $tooltip
+        createCompletionResult $_.name $_.name $tooltip
     }
 }
 
@@ -144,23 +140,8 @@ $routingKeyCompletion_Process = {
     $b = $a | where source -eq $fakeBoundParameter.ExchangeName | select routing_key 
 
     $b | ForEach-Object { 
-        createCompletionResult $_.routing_key  $_.routing_key 
+        createCompletionResult $_.routing_key $_.routing_key $_.routing_key 
     }
-}
-
-function createCompletionResult([string]$value, [string]$tooltip) {
-
-    return createCompletionResult $value $value $tooltip
-
-    <#
-    if ([string]::IsNullOrEmpty($value)) { return }
-    if ([string]::IsNullOrEmpty($tooltip)) { $tooltip = $value }
-    
-    $completionText = @{$true="'$value'"; $false=$value  }[$value -match "\W"]
-    $completionText = $completionText -replace '\[', '``[' -replace '\]', '``]'
-    
-    return New-Object System.Management.Automation.CompletionResult $completionText, $value, 'ParameterValue', $tooltip 
-    #>
 }
 
 function createCompletionResult([string]$text, [string]$value, [string]$tooltip) {
@@ -251,5 +232,7 @@ $global:options['CustomArgumentCompleters']['Move-RabbitMQMessage:SourceQueueNam
 $global:options['CustomArgumentCompleters']['Move-RabbitMQMessage:DestinationQueueName'] = $queueCompletion_Process 
 $global:options['CustomArgumentCompleters']['Move-RabbitMQMessage:VirtualHost'] = $virtualHostCompletion_Process 
 $global:options['CustomArgumentCompleters']['Move-RabbitMQMessage:ComputerName'] = $computerNameCompletion_Process 
+
+$global:options['CustomArgumentCompleters']['Unregister-RabbitMQServer:ComputerName'] = $computerNameCompletion_Process 
 
 $function:tabexpansion2 = $function:tabexpansion2 -replace 'End\r\n{','End { if ($null -ne $options) { $options += $global:options} else {$options = $global:options}'

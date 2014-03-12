@@ -13,6 +13,8 @@ $Module.OnRemove = {
 }
 
 
+Register-RabbitMQServer 'localhost' -WarningAction SilentlyContinue
+
 # Aliases
 New-Alias -Name grvh -value Get-RabbitMQVirtualHost -Description "Gets RabbitMQ's Virutal Hosts"
 New-Alias -Name getvhost -value Get-RabbitMQVirtualHost -Description "Gets RabbitMQ's Virutal Hosts"
@@ -48,3 +50,5 @@ Export-ModuleMember -Function Get-RabbitMQChannel
 Export-ModuleMember -Function Get-RabbitMQQueue, Add-RabbitMQQueue, Remove-RabbitMQQueue, Get-RabbitMQQueueBinding, Add-RabbitMQQueueBinding, Remove-RabbitMQQueueBinding
 
 Export-ModuleMember -Function Get-RabbitMQMessage, Add-RabbitMQMessage, Copy-RabbitMQMessage, Move-RabbitMQMessage, Clear-RabbitMQQueue
+
+Export-ModuleMember -Function Register-RabbitMQServer, Unregister-RabbitMQServer
