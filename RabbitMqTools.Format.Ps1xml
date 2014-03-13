@@ -661,7 +661,7 @@
 	        </TableControl>
 	    </View>
 
-		<!-- RabbitMQ.QueueBinding -->
+		<!-- RabbitMQ.QueueMessage -->
         <View>
 	        <Name>Standard</Name>
 	        <ViewSelectedBy>
@@ -710,5 +710,129 @@
 	            </TableRowEntries>
 	        </TableControl>
 	    </View>
+
+        <View>
+	        <Name>Details</Name>
+	        <ViewSelectedBy>
+	            <TypeName>RabbitMQ.QueueMessage</TypeName>
+	        </ViewSelectedBy>
+	        <TableControl>
+                <TableHeaders>
+	                <TableColumnHeader>
+	                    <Label>  #</Label>
+	                    <Width>3</Width>
+	                    <Alignment>right</Alignment>
+	                </TableColumnHeader>
+					<TableColumnHeader>
+	                    <Label>Server</Label>
+	                    <Width>20</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+					<TableColumnHeader>
+	                    <Label>VHost</Label>
+	                    <Width>20</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+					<TableColumnHeader>
+	                    <Label>Exchange</Label>
+	                    <Width>20</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Queue</Label>
+	                    <Width>20</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+					<TableColumnHeader>
+	                    <Label>Routing key</Label>
+	                    <Width>20</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>R</Label>
+	                    <Width>1</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Payload size</Label>
+	                    <Width>10</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Payload enconding</Label>
+	                    <Width>10</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	            </TableHeaders>
+	            <TableRowEntries>
+	                <TableRowEntry>
+	                    <TableColumnItems>
+	                        <TableColumnItem>
+	                            <PropertyName>no</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<PropertyName>ComputerName</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<PropertyName>VirtualHost</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<PropertyName>Exchange</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<PropertyName>QueueName</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<PropertyName>routing_key</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<ScriptBlock>@{$true="*";$false=" "}[$_.redelivered]</ScriptBlock>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<PropertyName>payload_bytes</PropertyName>
+								<Alignment>right</Alignment>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+								<PropertyName>payload_encoding</PropertyName>
+								<Alignment>center</Alignment>
+	                        </TableColumnItem>
+	                    </TableColumnItems>
+	                </TableRowEntry>
+	            </TableRowEntries>
+	        </TableControl>
+	    </View>
+		
+		<View>
+	        <Name>Payload</Name>
+	        <ViewSelectedBy>
+	            <TypeName>RabbitMQ.QueueMessage</TypeName>
+	        </ViewSelectedBy>
+
+			<CustomControl>
+			  <CustomEntries>
+				<CustomEntry>
+				  <CustomItem>
+					<NewLine/>
+					<ExpressionBinding>
+						<ScriptBlock>
+							$q = $_.Payload | ConvertFrom-Json
+							$w = $q | gm | ? MemberType -like '*property*'
+							$l = $w | select -ExpandProperty Name | sort length | select * -Last 1
+							
+							$s = "Message #$($_.no):`r`n--------------------`r`n"
+							foreach ($i in $w)
+							{
+								$s += [string]::Format("  {0,-$($l.Length)} : {1}`r`n", $i.Name, $q."$($i.Name)")
+							}
+							
+							$s
+						</ScriptBlock>
+					</ExpressionBinding>
+				  </CustomItem>
+				</CustomEntry>
+			  </CustomEntries>
+			</CustomControl>
+	    </View>
+			
 		</ViewDefinitions>
 </Configuration>

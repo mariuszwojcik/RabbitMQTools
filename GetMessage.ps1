@@ -39,21 +39,21 @@ function Get-RabbitMQMessage
     [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='None')]
     Param
     (
-        # Name of the virtual host to filter channels by.
-        [parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true, Position=0)]
-        [Alias("vh", "vhost")]
-        [string]$VirtualHost = $defaultVirtualhost,
-
         # Name of RabbitMQ Queue.
-        [parameter(Mandatory=$true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true, Position=1)]
+        [parameter(Mandatory=$true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true, Position=0)]
         [Alias("queue", "QueueName")]
         [string]$Name = "",
 
+        # Name of the virtual host to filter channels by.
+        [parameter(ValueFromPipelineByPropertyName=$true)]
+        [Alias("vh", "vhost")]
+        [string]$VirtualHost,
+        
         # Name of the computer hosting RabbitMQ server. Defalut value is localhost.
-        [parameter(ValueFromPipelineByPropertyName=$true, Position=2)]
+        [parameter(ValueFromPipelineByPropertyName=$true)]
         [Alias("HostName", "hn", "cn")]
         [string]$ComputerName = $defaultComputerName,
-        
+
         # UserName to use when logging to RabbitMq server. Default value is guest.
         [string]$UserName = $defaultUserName,
 
@@ -77,9 +77,9 @@ function Get-RabbitMQMessage
         [parameter(ValueFromPipelineByPropertyName=$true)]
         [int]$Truncate,
 
-        # Indicates whether command should return message body
-        [parameter(ValueFromPipelineByPropertyName=$true)]
-        [switch]$ShowBody
+        # Indicates what view should be used to present the data.
+        [ValidateSet("Table", "Payload")]
+        [string]$View = "Table"
     )
 
     Begin
@@ -92,6 +92,29 @@ function Get-RabbitMQMessage
     }
     Process
     {
+        if (-not $VirtualHost)
+        {
+            # figure out the Virtual Host value
+            $p = @{}
+            if ($ComputerName) { $p.Add("ComputerName", $ComputerName) }
+            if ($UserName) { $p.Add("UserName", $UserName) }
+            if ($Password) { $p.Add("Password", $Password) }
+            
+            $queues = Get-RabbitMQQueue @p | ? Name -eq $Name
+
+            if (-not $queues) { return; }
+
+            if (-not $queues.GetType().IsArray)
+            {
+                $VirtualHost = $queues.vhost
+            } else {
+                $vhosts = $queues | select vhost
+                $s = $vhosts -join ','
+                Write-Error "Queue $Name exists in multiple Virtual Hosts: $($queues.vhost -join ', '). Please specify Virtual Host to use."
+            }
+        }
+
+
         [string]$s = ""
         if ([bool]$Remove) { $s = "Messages will be removed from the queue." } else {$s = "Messages will be requeued."}
         if ($pscmdlet.ShouldProcess("server: $ComputerName/$VirtualHost", "Get $Count message(s) from queue $Name. $s"))
@@ -118,21 +141,22 @@ function Get-RabbitMQMessage
             {
                 $cnt++
                 $item | Add-Member -NotePropertyName "no" -NotePropertyValue $cnt
+                $item | Add-Member -NotePropertyName "ComputerName" -NotePropertyValue $ComputerName
+                $item | Add-Member -NotePropertyName "VirtualHost" -NotePropertyValue $VirtualHost
             }
 
-            if ($ShowBody) 
+            if ($View)
             {
-                foreach ($item in $result)
+                switch ($View.ToLower())
                 {
-                    Write-Output $item.payload | ConvertFrom-Json
-                    Write-Output ""
+                    'payload'
+                    {
+                        SendItemsToOutput $result "RabbitMQ.QueueMessage" | fc
+                    }
+                    
+                    Default { SendItemsToOutput $result "RabbitMQ.QueueMessage" }
                 }
             }
-            else
-            {
-                SendItemsToOutput $result "RabbitMQ.QueueMessage"
-            }
-
         }
     }
     End
@@ -140,3 +164,4 @@ function Get-RabbitMQMessage
         Write-Verbose "`r`nGot $cnt messages from queue $Name, vhost $VirtualHost, server: $ComputerName."
     }
 }
+
