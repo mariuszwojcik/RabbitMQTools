@@ -41,15 +41,15 @@ function Get-RabbitMQQueueBinding
     [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='None')]
     Param
     (
-        # Name of the virtual host to filter channels by.
-        [parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true, Position=0)]
-        [Alias("vh", "vhost")]
-        [string]$VirtualHost = $defaultVirtualhost,
-
         # Name of RabbitMQ Queue.
-        [parameter(Mandatory=$true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true, Position=1)]
+        [parameter(Mandatory=$true, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true, Position=0)]
         [Alias("queue", "QueueName")]
         [string[]]$Name = "",
+
+        # Name of the virtual host to filter channels by.
+        [parameter(Mandatory=$false, ValueFromPipelineByPropertyName=$true)]
+        [Alias("vh", "vhost")]
+        [string]$VirtualHost,
 
         # Name of the computer hosting RabbitMQ server. Defalut value is localhost.
         [parameter(ValueFromPipelineByPropertyName=$true, Position=2)]
@@ -68,6 +68,28 @@ function Get-RabbitMQQueueBinding
     }
     Process
     {
+        if (-not $VirtualHost)
+        {
+            # figure out the Virtual Host value
+            $p = @{}
+            if ($ComputerName) { $p.Add("ComputerName", $ComputerName) }
+            if ($UserName) { $p.Add("UserName", $UserName) }
+            if ($Password) { $p.Add("Password", $Password) }
+            
+            $queues = Get-RabbitMQQueue @p | ? Name -eq $Name
+
+            if (-not $queues) { return; }
+
+            if (-not $queues.GetType().IsArray)
+            {
+                $VirtualHost = $queues.vhost
+            } else {
+                $vhosts = $queues | select vhost
+                $s = $vhosts -join ','
+                Write-Error "Queue $Name exists in multiple Virtual Hosts: $($queues.vhost -join ', '). Please specify Virtual Host to use."
+            }
+        }
+
         if ($pscmdlet.ShouldProcess("server $ComputerName", "Get bindings for queue(s): $(NamesToString $Name '(all)')"))
         {
             foreach ($n in $Name)
