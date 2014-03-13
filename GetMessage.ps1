@@ -78,8 +78,8 @@ function Get-RabbitMQMessage
         [int]$Truncate,
 
         # Indicates what view should be used to present the data.
-        [ValidateSet("Table", "Payload")]
-        [string]$View = "Table"
+        [ValidateSet("Default", "Payload", "Details")]
+        [string]$View = "Default"
     )
 
     Begin
@@ -152,6 +152,11 @@ function Get-RabbitMQMessage
                     'payload'
                     {
                         SendItemsToOutput $result "RabbitMQ.QueueMessage" | fc
+                    }
+
+                    'details'
+                    {
+                        SendItemsToOutput $result "RabbitMQ.QueueMessage" | ft -View Details
                     }
                     
                     Default { SendItemsToOutput $result "RabbitMQ.QueueMessage" }

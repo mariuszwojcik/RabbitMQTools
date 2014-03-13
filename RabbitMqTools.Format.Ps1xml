@@ -815,11 +815,19 @@
 					<NewLine/>
 					<ExpressionBinding>
 						<ScriptBlock>
+							"Message #$($_.no):"
+						</ScriptBlock>
+					</ExpressionBinding>
+					<NewLine/>
+					<Text>--------------------</Text>
+					<NewLine/>
+					<ExpressionBinding>
+						<ScriptBlock>
 							$q = $_.Payload | ConvertFrom-Json
 							$w = $q | gm | ? MemberType -like '*property*'
 							$l = $w | select -ExpandProperty Name | sort length | select * -Last 1
 							
-							$s = "Message #$($_.no):`r`n--------------------`r`n"
+							$s = "" #"Message #$($_.no):`r`n--------------------`r`n"
 							foreach ($i in $w)
 							{
 								$s += [string]::Format("  {0,-$($l.Length)} : {1}`r`n", $i.Name, $q."$($i.Name)")
