@@ -841,6 +841,84 @@
 			  </CustomEntries>
 			</CustomControl>
 	    </View>
-			
-		</ViewDefinitions>
+
+		<!-- RabbitMQ.User -->
+		<View>
+	        <Name>Default</Name>
+	        <ViewSelectedBy>
+	            <TypeName>RabbitMQ.User</TypeName>
+	        </ViewSelectedBy>
+			<GroupBy>
+				<PropertyName>ComputerName</PropertyName>
+			</GroupBy>
+	        <TableControl>
+	            <TableHeaders>
+	                <TableColumnHeader>
+	                    <Label>Name</Label>
+	                    <Width>50</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Tags</Label>
+	                    <Width>30</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	            </TableHeaders>
+	            <TableRowEntries>
+	                <TableRowEntry>
+	                    <TableColumnItems>
+	                        <TableColumnItem>
+	                            <PropertyName>name</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>tags</PropertyName>
+	                        </TableColumnItem>
+	                    </TableColumnItems>
+	                </TableRowEntry>
+	            </TableRowEntries>
+	        </TableControl>
+	    </View>
+
+		<View>
+	        <Name>Flat</Name>
+	        <ViewSelectedBy>
+	            <TypeName>RabbitMQ.User</TypeName>
+	        </ViewSelectedBy>
+	        <TableControl>
+	            <TableHeaders>
+	                <TableColumnHeader>
+	                    <Label>ComputerName</Label>
+	                    <Width>20</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Name</Label>
+	                    <Width>50</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Tags</Label>
+	                    <Width>30</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	            </TableHeaders>
+	            <TableRowEntries>
+	                <TableRowEntry>
+	                    <TableColumnItems>
+	                        <TableColumnItem>
+	                            <PropertyName>ComputerName</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>name</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>tags</PropertyName>
+	                        </TableColumnItem>
+	                    </TableColumnItems>
+	                </TableRowEntry>
+	            </TableRowEntries>
+	        </TableControl>
+	    </View>
+		
+	</ViewDefinitions>
 </Configuration>

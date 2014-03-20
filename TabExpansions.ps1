@@ -233,6 +233,8 @@ $global:options['CustomArgumentCompleters']['Move-RabbitMQMessage:DestinationQue
 $global:options['CustomArgumentCompleters']['Move-RabbitMQMessage:VirtualHost'] = $virtualHostCompletion_Process 
 $global:options['CustomArgumentCompleters']['Move-RabbitMQMessage:ComputerName'] = $computerNameCompletion_Process 
 
+$global:options['CustomArgumentCompleters']['Get-RabbitMQUser:ComputerName'] = $computerNameCompletion_Process 
+
 $global:options['CustomArgumentCompleters']['Unregister-RabbitMQServer:ComputerName'] = $computerNameCompletion_Process 
 
 $function:tabexpansion2 = $function:tabexpansion2 -replace 'End\r\n{','End { if ($null -ne $options) { $options += $global:options} else {$options = $global:options}'
