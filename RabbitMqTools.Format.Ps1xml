@@ -920,5 +920,74 @@
 	        </TableControl>
 	    </View>
 		
+		<!-- RabbitMQ.Permission -->
+        <View>
+	        <Name>Default</Name>
+	        <ViewSelectedBy>
+	            <TypeName>RabbitMQ.Permission</TypeName>
+	        </ViewSelectedBy>
+	        <TableControl>
+                <TableHeaders>
+	                <TableColumnHeader>
+	                    <Label>Computer</Label>
+	                    <Width>20</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>vhost</Label>
+	                    <Width>30</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>user</Label>
+	                    <Width>30</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Configure</Label>
+	                    <Width>10</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Read     </Label>
+	                    <Width>10</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	                <TableColumnHeader>
+	                    <Label>Write    </Label>
+	                    <Width>10</Width>
+	                    <Alignment>left</Alignment>
+	                </TableColumnHeader>
+	            </TableHeaders>
+	            <TableRowEntries>
+	                <TableRowEntry>
+	                    <TableColumnItems>
+	                        <TableColumnItem>
+	                            <PropertyName>ComputerName</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>vhost</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>user</PropertyName>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>configure</PropertyName>
+								<Alignment>center</Alignment>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>read</PropertyName>
+								<Alignment>center</Alignment>
+	                        </TableColumnItem>
+	                        <TableColumnItem>
+	                            <PropertyName>write</PropertyName>
+								<Alignment>center</Alignment>
+	                        </TableColumnItem>
+
+	                    </TableColumnItems>
+	                </TableRowEntry>
+	            </TableRowEntries>
+	        </TableControl>
+	    </View>		
 	</ViewDefinitions>
 </Configuration>

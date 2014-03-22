@@ -144,6 +144,23 @@ $routingKeyCompletion_Process = {
     }
 }
 
+$userCompletion_Process = {
+    param($commandName, $parameterName, $wordToComplete, $commandAst, $fakeBoundParameter)
+    
+    $parms = @{}
+    if ($fakeBoundParameter.ComputerName) { $parms.Add("ComputerName", $fakeBoundParameter.ComputerName) }
+
+    if ($fakeBoundParameter.Credentials) { $parms.Add("Credentials", $fakeBoundParameter.Credentials) }
+    if ($fakeBoundParameter.UserName) { $parms.Add("UserName", $fakeBoundParameter.UserName) }
+    if ($fakeBoundParameter.Password) { $parms.Add("Password", $fakeBoundParameter.Password) }
+
+    Get-RabbitMQUser @parms | where name -like "$wordToComplete*" | ForEach-Object { 
+        $tooltip = "$($_.name) [$($_.tags)]"
+
+        createCompletionResult $_.name $_.name $tooltip
+    }
+}
+
 function createCompletionResult([string]$text, [string]$value, [string]$tooltip) {
 
     if ([string]::IsNullOrEmpty($value)) { return }
@@ -165,7 +182,6 @@ $global:options['CustomArgumentCompleters']['Get-RabbitMQOverview:Name'] = $comp
 
 $global:options['CustomArgumentCompleters']['Get-RabbitMQVirtualHost:Name'] = $virtualHostCompletion_Process 
 $global:options['CustomArgumentCompleters']['Get-RabbitMQVirtualHost:ComputerName'] = $computerNameCompletion_Process 
-#$global:options['CustomArgumentCompleters']['Add-RabbitMQVirtualHost:Name'] = $virtualHostCompletion_Process 
 $global:options['CustomArgumentCompleters']['Add-RabbitMQVirtualHost:ComputerName'] = $computerNameCompletion_Process 
 $global:options['CustomArgumentCompleters']['Remove-RabbitMQVirtualHost:Name'] = $virtualHostCompletion_Process 
 $global:options['CustomArgumentCompleters']['Remove-RabbitMQVirtualHost:ComputerName'] = $computerNameCompletion_Process 
@@ -173,7 +189,6 @@ $global:options['CustomArgumentCompleters']['Remove-RabbitMQVirtualHost:Computer
 $global:options['CustomArgumentCompleters']['Get-RabbitMQExchange:Name'] = $exchangeCompletion_Process 
 $global:options['CustomArgumentCompleters']['Get-RabbitMQExchange:VirtualHost'] = $virtualHostCompletion_Process 
 $global:options['CustomArgumentCompleters']['Get-RabbitMQExchange:ComputerName'] = $computerNameCompletion_Process 
-#$global:options['CustomArgumentCompleters']['Add-RabbitMQExchange:Name'] = $exchangeCompletion_Process 
 $global:options['CustomArgumentCompleters']['Add-RabbitMQExchange:VirtualHost'] = $virtualHostCompletion_Process 
 $global:options['CustomArgumentCompleters']['Add-RabbitMQExchange:ComputerName'] = $computerNameCompletion_Process 
 $global:options['CustomArgumentCompleters']['Remove-RabbitMQExchange:Name'] = $exchangeCompletion_Process 
@@ -234,6 +249,26 @@ $global:options['CustomArgumentCompleters']['Move-RabbitMQMessage:VirtualHost'] 
 $global:options['CustomArgumentCompleters']['Move-RabbitMQMessage:ComputerName'] = $computerNameCompletion_Process 
 
 $global:options['CustomArgumentCompleters']['Get-RabbitMQUser:ComputerName'] = $computerNameCompletion_Process 
+$global:options['CustomArgumentCompleters']['Get-RabbitMQUser:Name'] = $userCompletion_Process 
+$global:options['CustomArgumentCompleters']['Add-RabbitMQUser:ComputerName'] = $computerNameCompletion_Process 
+$global:options['CustomArgumentCompleters']['Add-RabbitMQUser:Name'] = $userCompletion_Process 
+$global:options['CustomArgumentCompleters']['Set-RabbitMQUser:ComputerName'] = $computerNameCompletion_Process 
+$global:options['CustomArgumentCompleters']['Set-RabbitMQUser:Name'] = $userCompletion_Process 
+$global:options['CustomArgumentCompleters']['Remove-RabbitMQUser:ComputerName'] = $computerNameCompletion_Process 
+$global:options['CustomArgumentCompleters']['Remove-RabbitMQUser:Name'] = $userCompletion_Process 
+
+$global:options['CustomArgumentCompleters']['Get-RabbitMQPermission:ComputerName'] = $computerNameCompletion_Process 
+$global:options['CustomArgumentCompleters']['Get-RabbitMQPermission:VirtualHost'] = $virtualHostCompletion_Process 
+$global:options['CustomArgumentCompleters']['Get-RabbitMQPermission:User'] = $userCompletion_Process 
+$global:options['CustomArgumentCompleters']['Add-RabbitMQPermission:ComputerName'] = $computerNameCompletion_Process 
+$global:options['CustomArgumentCompleters']['Add-RabbitMQPermission:VirtualHost'] = $virtualHostCompletion_Process 
+$global:options['CustomArgumentCompleters']['Add-RabbitMQPermission:User'] = $userCompletion_Process 
+$global:options['CustomArgumentCompleters']['Set-RabbitMQPermission:ComputerName'] = $computerNameCompletion_Process 
+$global:options['CustomArgumentCompleters']['Set-RabbitMQPermission:VirtualHost'] = $virtualHostCompletion_Process 
+$global:options['CustomArgumentCompleters']['Set-RabbitMQPermission:User'] = $userCompletion_Process 
+$global:options['CustomArgumentCompleters']['Remove-RabbitMQPermission:ComputerName'] = $computerNameCompletion_Process 
+$global:options['CustomArgumentCompleters']['Remove-RabbitMQPermission:VirtualHost'] = $virtualHostCompletion_Process 
+$global:options['CustomArgumentCompleters']['Remove-RabbitMQPermission:User'] = $userCompletion_Process 
 
 $global:options['CustomArgumentCompleters']['Unregister-RabbitMQServer:ComputerName'] = $computerNameCompletion_Process 
 
