@@ -53,4 +53,4 @@ Export-ModuleMember -Function Get-RabbitMQMessage, Add-RabbitMQMessage, Copy-Rab
 
 Export-ModuleMember -Function Register-RabbitMQServer, Unregister-RabbitMQServer
 
-Export-ModuleMember -Function Get-RabbitMQUser
+Export-ModuleMember -Function Get-RabbitMQUser, Add-RabbitMQUser, Remove-RabbitMQUser, Set-RabbitMQUser
