@@ -37,7 +37,7 @@
 #>
 function Remove-RabbitMQQueueBinding
 {
-    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="High")]
+    [CmdletBinding(DefaultParameterSetName='defaultLogin', SupportsShouldProcess=$true, ConfirmImpact="High")]
     Param
     (
         # Name of RabbitMQ Virtual Host.
@@ -65,19 +65,23 @@ function Remove-RabbitMQQueueBinding
         [Alias("HostName", "hn", "cn")]
         [string]$ComputerName = $defaultComputerName,
         
-        # UserName to use when logging to RabbitMq server. Default value is guest.
-        [string]$UserName = $defaultUserName,
+        
+        # UserName to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$UserName,
 
-        # Password to use when logging to RabbitMq server. Default value is guest.
-        [string]$Password = $defaultPassword
+        # Password to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$Password,
+
+        # Credentials to use when logging to RabbitMQ server.
+        [Parameter(Mandatory=$true, ParameterSetName='cred')]
+        [PSCredential]$Credentials
     )
 
     Begin
     {
-        Add-Type -AssemblyName System.Web
-        Add-Type -AssemblyName System.Net
-         
-        $cred = GetRabbitMqCredentials $UserName $Password
+        $Credentials = NormaliseCredentials
         $cnt = 0
 
     }
@@ -88,7 +92,7 @@ function Remove-RabbitMQQueueBinding
             $url = "http://$([System.Web.HttpUtility]::UrlEncode($ComputerName)):15672/api/bindings/$([System.Web.HttpUtility]::UrlEncode($VirtualHost))/e/$([System.Web.HttpUtility]::UrlEncode($ExchangeName))/q/$([System.Web.HttpUtility]::UrlEncode($Name))/$([System.Web.HttpUtility]::UrlEncode($RoutingKey))"
             Write-Verbose "Invoking REST API: $url"
         
-            $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -DisableKeepAlive -ErrorAction Continue -Method Delete
+            $result = Invoke-RestMethod $url -Credential $Credentials -AllowEscapedDotsAndSlashes -DisableKeepAlive -ErrorAction Continue -Method Delete
 
             Write-Verbose "Removed binding between exchange $ExchangeName and queue $Name $n on $ComputerName/$VirtualHost"
             $cnt++

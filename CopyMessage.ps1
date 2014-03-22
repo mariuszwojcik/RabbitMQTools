@@ -48,7 +48,7 @@
 #>
 function Copy-RabbitMQMessage
 {
-    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='High')]
+    [CmdletBinding(DefaultParameterSetName='defaultLogin', SupportsShouldProcess=$true, ConfirmImpact='High')]
     Param
     (
         # Name of the virtual host to filter channels by.
@@ -75,19 +75,23 @@ function Copy-RabbitMQMessage
         [Alias("HostName", "hn", "cn")]
         [string]$ComputerName = $defaultComputerName,
         
-        # UserName to use when logging to RabbitMq server. Default value is guest.
-        [string]$UserName = $defaultUserName,
+        
+        # UserName to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$UserName,
 
-        # Password to use when logging to RabbitMq server. Default value is guest.
-        [string]$Password = $defaultPassword
+        # Password to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$Password,
+
+        # Credentials to use when logging to RabbitMQ server.
+        [Parameter(Mandatory=$true, ParameterSetName='cred')]
+        [PSCredential]$Credentials
     )
 
     Begin
     {
-        Add-Type -AssemblyName System.Web
-        Add-Type -AssemblyName System.Net
-         
-        $cred = GetRabbitMqCredentials $UserName $Password
+        $Credentials = NormaliseCredentials
         $cnt = 0
         $requiresMessageRemoval = $SourceQueueName -ne $DestinationQueueName
     }
@@ -98,13 +102,13 @@ function Copy-RabbitMQMessage
         {
             $ename = "RabbitMQTools_copy"
             $routingKey = "RabbitMQTools_copy"
-            Add-RabbitMQExchange -ComputerName $ComputerName -VirtualHost $VirtualHost -Type fanout -AutoDelete -Name $ename
-            Add-RabbitMQQueueBinding -ComputerName $ComputerName -VirtualHost $VirtualHost -ExchangeName $ename -Name $SourceQueueName  -RoutingKey $routingKey
-            Add-RabbitMQQueueBinding -ComputerName $ComputerName -VirtualHost $VirtualHost -ExchangeName $ename -Name $DestinationQueueName -RoutingKey $routingKey
+            Add-RabbitMQExchange -ComputerName $ComputerName -VirtualHost $VirtualHost -Type fanout -AutoDelete -Name $ename -Credentials $Credentials
+            Add-RabbitMQQueueBinding -ComputerName $ComputerName -VirtualHost $VirtualHost -ExchangeName $ename -Name $SourceQueueName  -RoutingKey $routingKey -Credentials $Credentials
+            Add-RabbitMQQueueBinding -ComputerName $ComputerName -VirtualHost $VirtualHost -ExchangeName $ename -Name $DestinationQueueName -RoutingKey $routingKey -Credentials $Credentials
 
             try
             {
-                $m = Get-RabbitMQMessage -ComputerName $ComputerName $VirtualHost $SourceQueueName
+                $m = Get-RabbitMQMessage -Credentials $Credentials -ComputerName $ComputerName -VirtualHost $VirtualHost -Name $SourceQueueName
                 $c = $m.message_count + 1
 
                 if ($Count -eq 0 -or $Count -gt $c ) { $Count = $c }
@@ -113,13 +117,13 @@ function Copy-RabbitMQMessage
                 for ($i = 1; $i -le $Count; $i++)
                 {
                     # get message to be copies, but do not remove it from the server yet.
-                    $m = Get-RabbitMQMessage -ComputerName $ComputerName $VirtualHost $SourceQueueName
+                    $m = Get-RabbitMQMessage -Credentials $Credentials -ComputerName $ComputerName -VirtualHost $VirtualHost -Name $SourceQueueName
 
                     # publish message to copying exchange, this will publish it onto dest queue as well as src queue.
-                    Add-RabbitMQMessage -ComputerName $ComputerName $VirtualHost $ename $routingKey $m.payload $m.properties
+                    Add-RabbitMQMessage -Credentials $Credentials -ComputerName $ComputerName -VirtualHost $VirtualHost -ExchangeName $ename -RoutingKey $routingKey -Payload $m.payload -Properties $m.properties
 
                     # remove message from src queue. It has been published step earlier.
-                    if ($requiresMessageRemoval) { $m = Get-RabbitMQMessage -ComputerName $ComputerName $VirtualHost $SourceQueueName -Remove }
+                    if ($requiresMessageRemoval) { $m = Get-RabbitMQMessage -Credentials $Credentials -ComputerName $ComputerName -VirtualHost $VirtualHost -Name $SourceQueueName -Remove }
 
                     [int]$p = ($i * 100) / $Count
                     if ($p -gt 100) { $p = 100 }
@@ -131,7 +135,7 @@ function Copy-RabbitMQMessage
             }
             finally
             {
-                Remove-RabbitMQExchange -ComputerName $ComputerName -VirtualHost $VirtualHost -Name $ename -Confirm:$false
+                Remove-RabbitMQExchange -Credentials $Credentials -ComputerName $ComputerName -VirtualHost $VirtualHost -Name $ename -Confirm:$false
             }
         }
     }

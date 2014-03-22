@@ -67,22 +67,16 @@ function Get-RabbitMQUser
         [string]$UserName,
 
         # Password to use when logging to RabbitMq server. Default value is guest.
-        [Parameter(ParameterSetName='login')]
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
         [string]$Password,
 
-        [Parameter(ParameterSetName='cred')]
+        [Parameter(Mandatory=$true, ParameterSetName='cred')]
         [PSCredential]$Credentials
     )
 
     Begin
     {
-        #Add-Type -AssemblyName System.Web
-                
-        switch ($PsCmdlet.ParameterSetName)
-        {
-            "defaultLogin" { $Credentials = GetRabbitMqCredentials $defaultUserName $defaultPassword }
-            "login" { $Credentials = GetRabbitMqCredentials $UserName $Password }
-        }
+        $Credentials = NormaliseCredentials
     }
     Process
     {

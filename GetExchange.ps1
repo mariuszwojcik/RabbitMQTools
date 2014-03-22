@@ -58,7 +58,7 @@
 #>
 function Get-RabbitMQExchange
 {
-    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='None')]
+    [CmdletBinding(DefaultParameterSetName='defaultLogin', SupportsShouldProcess=$true, ConfirmImpact='None')]
     Param
     (
         # Name of RabbitMQ Exchange.
@@ -76,21 +76,29 @@ function Get-RabbitMQExchange
         [Alias("HostName", "hn", "cn")]
         [string]$ComputerName = $defaultComputerName,
         
-        # UserName to use when logging to RabbitMq server. Default value is guest.
-        [string]$UserName = $defaultUserName,
+        
+        # UserName to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$UserName,
 
-        # Password to use when logging to RabbitMq server. Default value is guest.
-        [string]$Password = $defaultPassword
+        # Password to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$Password,
+
+        # Credentials to use when logging to RabbitMQ server.
+        [Parameter(Mandatory=$true, ParameterSetName='cred')]
+        [PSCredential]$Credentials
     )
 
     Begin
     {
+        $Credentials = NormaliseCredentials
     }
     Process
     {
         if ($pscmdlet.ShouldProcess("server $ComputerName", "Get exchange(s): $(NamesToString $Name '(all)')"))
         {
-            $exchanges = GetItemsFromRabbitMQApi $ComputerName $UserName $Password "exchanges"
+            $exchanges = GetItemsFromRabbitMQApi -ComputerName $ComputerName $Credentials "exchanges"
             
             $result = ApplyFilter $exchanges 'vhost' $VirtualHost
             $result = ApplyFilter $result 'name' $Name

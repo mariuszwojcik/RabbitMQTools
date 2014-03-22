@@ -59,7 +59,7 @@
 #>
 function Get-RabbitMQQueue
 {
-    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='None')]
+    [CmdletBinding(DefaultParameterSetName='defaultLogin', SupportsShouldProcess=$true, ConfirmImpact='None')]
     Param
     (
         # Name of RabbitMQ queue.
@@ -76,28 +76,37 @@ function Get-RabbitMQQueue
         [parameter(ValueFromPipelineByPropertyName=$true)]
         [Alias("vh", "vhost")]
         [string]$VirtualHost,
-        
-        # UserName to use when logging to RabbitMq server. Default value is guest.
-        [string]$UserName = $defaultUserName,
 
-        # Password to use when logging to RabbitMq server. Default value is guest.
-        [string]$Password = $defaultPassword,
 
         # When set then returns only queues which have messages.
         [switch]$NotEmpty,
 
         # When set then displays queue statistics.
-        [switch]$ShowStats
+        [switch]$ShowStats,
+
+        
+        # UserName to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$UserName,
+
+        # Password to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$Password,
+
+        # Credentials to use when logging to RabbitMQ server.
+        [Parameter(Mandatory=$true, ParameterSetName='cred')]
+        [PSCredential]$Credentials
     )
 
     Begin
     {
+        $Credentials = NormaliseCredentials
     }
     Process
     {
         if ($pscmdlet.ShouldProcess("server $ComputerName", "Get queues(s): $(NamesToString $Name '(all)')"))
         {
-            $result = GetItemsFromRabbitMQApi $ComputerName $UserName $Password "queues"
+            $result = GetItemsFromRabbitMQApi -ComputerName $ComputerName $Credentials "queues"
             
             $result = ApplyFilter $result 'name' $Name
             if ($VirtualHost) { $result = ApplyFilter $result 'vhost' $VirtualHost }

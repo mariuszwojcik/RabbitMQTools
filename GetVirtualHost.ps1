@@ -58,7 +58,7 @@
 #>
 function Get-RabbitMQVirtualHost
 {
-    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='None')]
+    [CmdletBinding(DefaultParameterSetName='defaultLogin', SupportsShouldProcess=$true, ConfirmImpact='None')]
     Param
     (
         # Name of RabbitMQ Virtual Host.
@@ -71,21 +71,29 @@ function Get-RabbitMQVirtualHost
         [Alias("HostName", "hn", "cn")]
         [string]$ComputerName = $defaultComputerName,
         
-        # UserName to use when logging to RabbitMq server. Default value is guest.
-        [string]$UserName = $defaultUserName,
+        
+        # UserName to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$UserName,
 
-        # Password to use when logging to RabbitMq server. Default value is guest.
-        [string]$Password = $defaultPassword
+        # Password to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$Password,
+
+        # Credentials to use when logging to RabbitMQ server.
+        [Parameter(Mandatory=$true, ParameterSetName='cred')]
+        [PSCredential]$Credentials
     )
 
     Begin
     {
+        $Credentials = NormaliseCredentials
     }
     Process
     {
         if ($pscmdlet.ShouldProcess("server $ComputerName", "Get vhost(s): $(NamesToString $Name '(all)')"))
         {
-            $vhosts = GetItemsFromRabbitMQApi $ComputerName $UserName $Password "vhosts"
+            $vhosts = GetItemsFromRabbitMQApi -ComputerName $ComputerName $Credentials "vhosts"
             $result = ApplyFilter $vhosts "name" $Name
 
             foreach($i in $result)

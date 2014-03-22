@@ -49,7 +49,7 @@
 #>
 function Get-RabbitMQChannel
 {
-    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='None')]
+    [CmdletBinding(DefaultParameterSetName='defaultLogin', SupportsShouldProcess=$true, ConfirmImpact='None')]
     Param
     (
         # Name of RabbitMQ Node.
@@ -67,21 +67,29 @@ function Get-RabbitMQChannel
         [Alias("vh", "vhost")]
         [string]$VirtualHost,
         
-        # UserName to use when logging to RabbitMq server. Default value is guest.
-        [string]$UserName = $defaultUserName,
+        
+        # UserName to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$UserName,
 
-        # Password to use when logging to RabbitMq server. Default value is guest.
-        [string]$Password = $defaultPassword
+        # Password to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$Password,
+
+        # Credentials to use when logging to RabbitMQ server.
+        [Parameter(Mandatory=$true, ParameterSetName='cred')]
+        [PSCredential]$Credentials
     )
 
     Begin
     {
+        $Credentials = NormaliseCredentials
     }
     Process
     {
         if ($pscmdlet.ShouldProcess("server $ComputerName", "Get node(s): $(NamesToString $Name '(all)')"))
         {
-            $result = GetItemsFromRabbitMQApi $ComputerName $UserName $Password "channels"
+            $result = GetItemsFromRabbitMQApi -ComputerName $ComputerName $Credentials "channels"
             
             $result = ApplyFilter $result 'name' $Name
             if ($VirtualHost) { $result = ApplyFilter $result 'vhost' $VirtualHost }

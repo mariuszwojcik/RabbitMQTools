@@ -55,7 +55,7 @@
 #>
 function Add-RabbitMQVirtualHost
 {
-    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="Low")]
+    [CmdletBinding(DefaultParameterSetName='defaultLogin', SupportsShouldProcess=$true, ConfirmImpact="Low")]
     Param
     (
         # Name of RabbitMQ Virtual Host.
@@ -68,19 +68,23 @@ function Add-RabbitMQVirtualHost
         [Alias("HostName", "hn", "cn")]
         [string]$ComputerName = $defaultComputerName,
         
-        # UserName to use when logging to RabbitMq server. Default value is guest.
-        [string]$UserName = $defaultUserName,
+        
+        # UserName to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$UserName,
 
-        # Password to use when logging to RabbitMq server. Default value is guest.
-        [string]$Password = $defaultPassword
+        # Password to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$Password,
+
+        # Credentials to use when logging to RabbitMQ server.
+        [Parameter(Mandatory=$true, ParameterSetName='cred')]
+        [PSCredential]$Credentials
     )
 
     Begin
     {
-        Add-Type -AssemblyName System.Web
-        Add-Type -AssemblyName System.Net
-         
-        $cred = GetRabbitMqCredentials $UserName $Password
+        $Credentials = NormaliseCredentials
         $cnt = 0
     }
     Process
@@ -98,7 +102,7 @@ function Add-RabbitMQVirtualHost
         foreach($n in $Name)
         {
             $url = "http://$([System.Web.HttpUtility]::UrlEncode($ComputerName)):15672/api/vhosts/$([System.Web.HttpUtility]::UrlEncode($n))"
-            $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -DisableKeepAlive -ErrorAction Continue -Method Put -ContentType "application/json"
+            $result = Invoke-RestMethod $url -Credential $Credentials -AllowEscapedDotsAndSlashes -DisableKeepAlive -ErrorAction Continue -Method Put -ContentType "application/json"
 
             Write-Verbose "Created Virtual Host $n on server $ComputerName"
             $cnt++

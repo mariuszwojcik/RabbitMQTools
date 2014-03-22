@@ -53,7 +53,7 @@
 #>
 function Remove-RabbitMQConnection
 {
-    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="High")]
+    [CmdletBinding(DefaultParameterSetName='defaultLogin', SupportsShouldProcess=$true, ConfirmImpact="High")]
     Param
     (
         # Name of RabbitMQ connection.
@@ -66,19 +66,23 @@ function Remove-RabbitMQConnection
         [Alias("HostName", "hn", "cn")]
         [string]$ComputerName = $defaultComputerName,
         
-        # UserName to use when logging to RabbitMq server. Default value is guest.
-        [string]$UserName = $defaultUserName,
+        
+        # UserName to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$UserName,
 
-        # Password to use when logging to RabbitMq server. Default value is guest.
-        [string]$Password = $defaultPassword
+        # Password to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$Password,
+
+        # Credentials to use when logging to RabbitMQ server.
+        [Parameter(Mandatory=$true, ParameterSetName='cred')]
+        [PSCredential]$Credentials
     )
 
     Begin
     {
-        Add-Type -AssemblyName System.Web
-        Add-Type -AssemblyName System.Net
-         
-        $cred = GetRabbitMqCredentials $UserName $Password
+        $Credentials = NormaliseCredentials
         $cnt = 0
     }
     Process
@@ -95,7 +99,7 @@ function Remove-RabbitMQConnection
         foreach($n in $Name)
         {
             $url = "http://$([System.Web.HttpUtility]::UrlEncode($ComputerName)):15672/api/connections/$([System.Web.HttpUtility]::UrlEncode($n))"
-            $result = Invoke-RestMethod $url -Credential $cred -DisableKeepAlive -ErrorAction Continue -Method Delete
+            $result = Invoke-RestMethod $url -Credential $Credentials -DisableKeepAlive -ErrorAction Continue -Method Delete
 
             Write-Verbose "Closed connection $n to server $ComputerName"
             $cnt++

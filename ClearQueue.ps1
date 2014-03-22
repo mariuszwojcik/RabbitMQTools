@@ -28,7 +28,7 @@
 #>
 function Clear-RabbitMQQueue
 {
-    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="High")]
+    [CmdletBinding(DefaultParameterSetName='defaultLogin', SupportsShouldProcess=$true, ConfirmImpact="High")]
     Param
     (
         # Name of RabbitMQ Virtual Host.
@@ -46,16 +46,23 @@ function Clear-RabbitMQQueue
         [Alias("cn", "HostName")]
         [string]$ComputerName = $defaultComputerName,
         
-        # UserName to use when logging to RabbitMq server. Default value is guest.
-        [string]$UserName = $defaultUserName,
+        
+        # UserName to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$UserName,
 
-        # Password to use when logging to RabbitMq server. Default value is guest.
-        [string]$Password = $defaultPassword
+        # Password to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$Password,
+
+        # Credentials to use when logging to RabbitMQ server.
+        [Parameter(Mandatory=$true, ParameterSetName='cred')]
+        [PSCredential]$Credentials
     )
 
     Begin
     {
-        $cred = GetRabbitMqCredentials $UserName $Password
+        $Credentials = NormaliseCredentials
     }
     Process
     {
@@ -64,7 +71,7 @@ function Clear-RabbitMQQueue
             $url = "http://$([System.Web.HttpUtility]::UrlEncode($ComputerName)):15672/api/queues/$([System.Web.HttpUtility]::UrlEncode($VirtualHost))/$([System.Web.HttpUtility]::UrlEncode($Name))/contents"
             Write-Verbose "Invoking REST API: $url"
 
-            $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -DisableKeepAlive -ErrorAction Continue -Method Delete
+            $result = Invoke-RestMethod $url -Credential $Credentials -AllowEscapedDotsAndSlashes -DisableKeepAlive -ErrorAction Continue -Method Delete
         }
     }
     End

@@ -59,7 +59,7 @@
 #>
 function Add-RabbitMQExchange
 {
-    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="Medium")]
+    [CmdletBinding(DefaultParameterSetName='defaultLogin', SupportsShouldProcess=$true, ConfirmImpact="Medium")]
     Param
     (
         # Name of RabbitMQ Exchange.
@@ -99,21 +99,23 @@ function Add-RabbitMQExchange
         [Alias("HostName", "hn", "cn")]
         [string]$ComputerName = $defaultComputerName,
         
-        # UserName to use when logging to RabbitMq server. Default value is guest.
-        [string]$UserName = $defaultUserName,
+        
+        # UserName to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$UserName,
 
-        # Password to use when logging to RabbitMq server. Default value is guest.
-        [string]$Password = $defaultPassword
+        # Password to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$Password,
+
+        # Credentials to use when logging to RabbitMQ server.
+        [Parameter(Mandatory=$true, ParameterSetName='cred')]
+        [PSCredential]$Credentials
     )
 
     Begin
     {
-        Add-Type -AssemblyName System.Web
-        Add-Type -AssemblyName System.Net
-         
-        $cred = GetRabbitMqCredentials $UserName $Password
-        $cnt = 0
-
+        $Credentials = NormaliseCredentials
     }
     Process
     {
@@ -135,7 +137,7 @@ function Add-RabbitMQExchange
                 $url = "http://$([System.Web.HttpUtility]::UrlEncode($ComputerName)):15672/api/exchanges/$([System.Web.HttpUtility]::UrlEncode($VirtualHost))/$([System.Web.HttpUtility]::UrlEncode($n))"
                 Write-Verbose "Invoking REST API: $url"
         
-                $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -DisableKeepAlive -ErrorAction Continue -Method Put -ContentType "application/json" -Body $bodyJson
+                $result = Invoke-RestMethod $url -Credential $Credentials -AllowEscapedDotsAndSlashes -DisableKeepAlive -ErrorAction Continue -Method Put -ContentType "application/json" -Body $bodyJson
 
                 Write-Verbose "Created Exchange $n on server $ComputerName, Virtual Host $VirtualHost"
                 $cnt++

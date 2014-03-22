@@ -36,7 +36,7 @@
 #>
 function Get-RabbitMQMessage
 {
-    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='None')]
+    [CmdletBinding(DefaultParameterSetName='defaultLogin', SupportsShouldProcess=$true, ConfirmImpact='None')]
     Param
     (
         # Name of RabbitMQ Queue.
@@ -54,11 +54,6 @@ function Get-RabbitMQMessage
         [Alias("HostName", "hn", "cn")]
         [string]$ComputerName = $defaultComputerName,
 
-        # UserName to use when logging to RabbitMq server. Default value is guest.
-        [string]$UserName = $defaultUserName,
-
-        # Password to use when logging to RabbitMq server. Default value is guest.
-        [string]$Password = $defaultPassword,
 
         # Number of messages to get. Default value is 1.
         [parameter(ValueFromPipelineByPropertyName=$true)]
@@ -79,15 +74,25 @@ function Get-RabbitMQMessage
 
         # Indicates what view should be used to present the data.
         [ValidateSet("Default", "Payload", "Details")]
-        [string]$View = "Default"
+        [string]$View = "Default",
+        
+        
+        # UserName to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$UserName,
+
+        # Password to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$Password,
+
+        # Credentials to use when logging to RabbitMQ server.
+        [Parameter(Mandatory=$true, ParameterSetName='cred')]
+        [PSCredential]$Credentials
     )
 
     Begin
     {
-        Add-Type -AssemblyName System.Web
-        Add-Type -AssemblyName System.Net
-         
-        $cred = GetRabbitMqCredentials $UserName $Password
+        $Credentials = NormaliseCredentials
         $cnt = 0
     }
     Process
@@ -96,9 +101,8 @@ function Get-RabbitMQMessage
         {
             # figure out the Virtual Host value
             $p = @{}
+            $p.Add("Credentials", $Credentials)
             if ($ComputerName) { $p.Add("ComputerName", $ComputerName) }
-            if ($UserName) { $p.Add("UserName", $UserName) }
-            if ($Password) { $p.Add("Password", $Password) }
             
             $queues = Get-RabbitMQQueue @p | ? Name -eq $Name
 
@@ -133,7 +137,7 @@ function Get-RabbitMQMessage
 
             Write-Debug "body: $bodyJson"
 
-            $result = Invoke-RestMethod $url -Credential $cred -AllowEscapedDotsAndSlashes -DisableKeepAlive -ErrorAction Continue -Method Post -ContentType "application/json" -Body $bodyJson
+            $result = Invoke-RestMethod $url -Credential $Credentials -AllowEscapedDotsAndSlashes -DisableKeepAlive -ErrorAction Continue -Method Post -ContentType "application/json" -Body $bodyJson
 
             $result | Add-Member -NotePropertyName "QueueName" -NotePropertyValue $Name
 

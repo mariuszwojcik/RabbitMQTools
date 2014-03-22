@@ -45,7 +45,7 @@
 #>
 function Move-RabbitMQMessage
 {
-    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='High')]
+    [CmdletBinding(DefaultParameterSetName='defaultLogin', SupportsShouldProcess=$true, ConfirmImpact='High')]
     Param
     (
         # Name of the virtual host to filter channels by.
@@ -72,29 +72,33 @@ function Move-RabbitMQMessage
         [Alias("HostName", "hn", "cn")]
         [string]$ComputerName = $defaultComputerName,
         
-        # UserName to use when logging to RabbitMq server. Default value is guest.
-        [string]$UserName = $defaultUserName,
+        
+        # UserName to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$UserName,
 
-        # Password to use when logging to RabbitMq server. Default value is guest.
-        [string]$Password = $defaultPassword
+        # Password to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$Password,
+
+        # Credentials to use when logging to RabbitMQ server.
+        [Parameter(Mandatory=$true, ParameterSetName='cred')]
+        [PSCredential]$Credentials
     )
 
     Begin
     {
-        Add-Type -AssemblyName System.Web
-        Add-Type -AssemblyName System.Net
-         
-        $cred = GetRabbitMqCredentials $UserName $Password
+        $Credentials = NormaliseCredentials
         $cnt = 0
         
-        $exchange = Get-RabbitMQQueueBinding $VirtualHost $DestinationQueueName | ? source -ne "" | select -First 1
+        $exchange = Get-RabbitMQQueueBinding -VirtualHost $VirtualHost -Name $DestinationQueueName -Credentials $Credentials | ? source -ne "" | select -First 1
     }
     Process
     {
         $s = @{$true=$Count;$false='all'}[$Count -gt 0]
         if ($pscmdlet.ShouldProcess("server: $ComputerName/$VirtualHost", "Move $s messages from queue $SourceQueueName to queue $DestinationQueueName."))
         {
-            $m = Get-RabbitMQMessage $VirtualHost $SourceQueueName
+            $m = Get-RabbitMQMessage -Credentials $Credentials -VirtualHost $VirtualHost -Name $SourceQueueName
             $c = $m.message_count + 1
 
             if ($Count -eq 0 -or $Count -gt $c ) { $Count = $c }
@@ -103,13 +107,13 @@ function Move-RabbitMQMessage
             for ($i = 1; $i -le $Count; $i++)
             {
                 # get message to be copies, but do not remove it from the server yet.
-                $m = Get-RabbitMQMessage $VirtualHost $SourceQueueName
+                $m = Get-RabbitMQMessage -Credentials $Credentials -VirtualHost $VirtualHost -Name $SourceQueueName
 
                 # publish message to copying exchange, this will publish it onto dest queue as well as src queue.
-                Add-RabbitMQMessage $vhost $exchange.source $exchange.routing_key $m.payload $m.properties
+                Add-RabbitMQMessage -Credentials $Credentials -VirtualHost $VirtualHost -ExchangeName $exchange.source -RoutingKey $exchange.routing_key -Payload $m.payload -Properties $m.properties
 
                 # remove message from src queue. It has been published step earlier.
-                $m = Get-RabbitMQMessage $VirtualHost $SourceQueueName -Remove
+                $m = Get-RabbitMQMessage -Credentials $Credentials -VirtualHost $VirtualHost -Name $SourceQueueName -Remove
 
                 Write-Verbose "published message $i out of $Count"
                 $cnt++

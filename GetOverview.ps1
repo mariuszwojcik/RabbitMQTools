@@ -35,7 +35,7 @@
 #>
 function Get-RabbitMQOverview
 {
-    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='None')]
+    [CmdletBinding(DefaultParameterSetName='defaultLogin', SupportsShouldProcess=$true, ConfirmImpact='None')]
     Param
     (
         # Name of the computer hosting RabbitMQ server. Defalut value is localhost.
@@ -43,18 +43,23 @@ function Get-RabbitMQOverview
         [Alias("cn", "HostName", "ComputerName")]
         [string[]]$Name = $defaultComputerName,
         
-        # UserName to use when logging to RabbitMq server. Default value is guest.
-        [string]$UserName = $defaultUserName,
+        
+        # UserName to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$UserName,
 
-        # Password to use when logging to RabbitMq server. Default value is guest.
-        [string]$Password = $defaultPassword
+        # Password to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$Password,
+
+        # Credentials to use when logging to RabbitMQ server.
+        [Parameter(Mandatory=$true, ParameterSetName='cred')]
+        [PSCredential]$Credentials
     )
 
     Begin
     {
-        Add-Type -AssemblyName System.Web
-                
-        $cred = GetRabbitMqCredentials $UserName $Password
+        $Credentials = NormaliseCredentials
     }
     Process
     {
@@ -69,7 +74,7 @@ function Get-RabbitMQOverview
 
         foreach ($cn in $Name)
         {
-            $overview = GetItemsFromRabbitMQApi $cn $UserName $Password "overview"
+            $overview = GetItemsFromRabbitMQApi -ComputerName $cn $Credentials "overview"
             $overview | Add-Member -NotePropertyName "ComputerName" -NotePropertyValue $cn
             $overview.PSObject.TypeNames.Insert(0, "RabbitMQ.ServerOverview")
 

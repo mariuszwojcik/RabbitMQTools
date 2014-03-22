@@ -38,7 +38,7 @@
 #>
 function Get-RabbitMQQueueBinding
 {
-    [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact='None')]
+    [CmdletBinding(DefaultParameterSetName='defaultLogin', SupportsShouldProcess=$true, ConfirmImpact='None')]
     Param
     (
         # Name of RabbitMQ Queue.
@@ -56,15 +56,23 @@ function Get-RabbitMQQueueBinding
         [Alias("HostName", "hn", "cn")]
         [string]$ComputerName = $defaultComputerName,
         
-        # UserName to use when logging to RabbitMq server. Default value is guest.
-        [string]$UserName = $defaultUserName,
+        
+        # UserName to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$UserName,
 
-        # Password to use when logging to RabbitMq server. Default value is guest.
-        [string]$Password = $defaultPassword
+        # Password to use when logging to RabbitMq server.
+        [Parameter(Mandatory=$true, ParameterSetName='login')]
+        [string]$Password,
+
+        # Credentials to use when logging to RabbitMQ server.
+        [Parameter(Mandatory=$true, ParameterSetName='cred')]
+        [PSCredential]$Credentials
     )
 
     Begin
     {
+        $Credentials = NormaliseCredentials
     }
     Process
     {
@@ -72,9 +80,8 @@ function Get-RabbitMQQueueBinding
         {
             # figure out the Virtual Host value
             $p = @{}
+            $p.Add("Credentials", $Credentials)
             if ($ComputerName) { $p.Add("ComputerName", $ComputerName) }
-            if ($UserName) { $p.Add("UserName", $UserName) }
-            if ($Password) { $p.Add("Password", $Password) }
             
             $queues = Get-RabbitMQQueue @p | ? Name -eq $Name
 
@@ -94,7 +101,7 @@ function Get-RabbitMQQueueBinding
         {
             foreach ($n in $Name)
             {
-                $result = GetItemsFromRabbitMQApi $ComputerName $UserName $Password "queues/$([System.Web.HttpUtility]::UrlEncode($VirtualHost))/$([System.Web.HttpUtility]::UrlEncode($n))/bindings"
+                $result = GetItemsFromRabbitMQApi -ComputerName $ComputerName $Credentials "queues/$([System.Web.HttpUtility]::UrlEncode($VirtualHost))/$([System.Web.HttpUtility]::UrlEncode($n))/bindings"
 
                 $result | Add-Member -NotePropertyName "ComputerName" -NotePropertyValue $ComputerName
 
