@@ -29,4 +29,4 @@ There is a set of cmdlets to manage the server, such as:
 - Get-RbbitMQQueue, Add-RabbitMQQueue, Remove-RabbitMQQueue
 - Get-RabbitMQMessage
 
-To learn more about a cmdlet, or to see some examples run get-hel cmdlet_name
+To learn more about a cmdlet, or to see some examples run Get-Help cmdlet_name
